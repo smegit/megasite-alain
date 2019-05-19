@@ -5,6 +5,7 @@ import { TitleService } from '@delon/theme';
 import { VERSION as VERSION_ALAIN } from '@delon/theme';
 import { VERSION as VERSION_ZORRO, NzModalService } from 'ng-zorro-antd';
 
+import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   template: `
@@ -21,6 +22,9 @@ export class AppComponent implements OnInit {
   ) {
     renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
     renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
+    // test for env
+    console.info(environment);
+
   }
 
   ngOnInit() {

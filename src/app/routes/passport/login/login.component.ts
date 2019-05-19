@@ -8,6 +8,9 @@ import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
 import { StartupService } from '@core';
 
+// import service
+import { UserAccessService } from '../../../services/userAccess/user-access.service';
+
 @Component({
   selector: 'passport-login',
   templateUrl: './login.component.html',
@@ -32,6 +35,7 @@ export class UserLoginComponent implements OnDestroy {
     private startupSrv: StartupService,
     public http: _HttpClient,
     public msg: NzMessageService,
+    private userAccessSrv: UserAccessService
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(4)]],
@@ -85,6 +89,7 @@ export class UserLoginComponent implements OnDestroy {
   // #endregion
 
   submit() {
+    console.info('submit called');
     this.error = '';
     if (this.type === 0) {
       this.userName.markAsDirty();
@@ -102,28 +107,72 @@ export class UserLoginComponent implements OnDestroy {
 
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
-    this.http
-      .post('/login/account?_allow_anonymous=true', {
-        type: this.type,
-        userName: this.userName.value,
-        password: this.password.value,
-      })
+    // this.http
+    //   .post('/login/account?_allow_anonymous=true', {
+    //     type: this.type,
+    //     userName: this.userName.value,
+    //     password: this.password.value,
+    //   })
+    //   .subscribe((res: any) => {
+    //     if (res.msg !== 'ok') {
+    //       this.error = res.msg;
+    //       return;
+    //     }
+    //     // 清空路由复用信息
+    //     this.reuseTabService.clear();
+    //     // 设置用户Token信息
+    //     this.tokenService.set(res.user);
+    //     // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+    //     this.startupSrv.load().then(() => {
+    //       let url = this.tokenService.referrer!.url || '/';
+    //       if (url.includes('/passport')) url = '/';
+    //       console.info(url);
+    //       this.router.navigateByUrl(url);
+    //     });
+    //   });
+
+
+    let loginDetail = {
+      email: this.userName.value,
+      password: this.password.value
+    }
+    this.userAccessSrv.login(loginDetail)
       .subscribe((res: any) => {
-        if (res.msg !== 'ok') {
-          this.error = res.msg;
+        console.info(res);
+
+        // {
+        //   msg: 'ok',
+        //   user: {
+        //     token: '123456789',
+        //     name: data.userName,
+        //     email: `${data.userName}@qq.com`,
+        //     id: 10000,
+        //     time: +new Date(),
+        //   },
+        // };
+        if (!res.token) {
+          this.error = res.error;
           return;
         }
-        // 清空路由复用信息
         this.reuseTabService.clear();
-        // 设置用户Token信息
-        this.tokenService.set(res.user);
-        // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+        // set token
+        // this.tokenService.set({
+        //   token: '123',
+        //   name: 'jesse',
+        //   email: `123@qq.com`,
+        //   id: 10000,
+        //   time: +new Date(),
+        // });
+        this.tokenService.set({
+          token: res.token
+        });
+        // get app info
         this.startupSrv.load().then(() => {
           let url = this.tokenService.referrer!.url || '/';
-          if (url.includes('/passport')) url = '/';
           this.router.navigateByUrl(url);
         });
       });
+
   }
 
   // #region social

@@ -31,7 +31,7 @@ interface LangData {
   abbr: string;
 }
 
-const DEFAULT = 'zh-CN';
+const DEFAULT = 'en-US';
 const LANGS: { [key: string]: LangData } = {
   'zh-CN': {
     text: '简体中文',

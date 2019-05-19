@@ -37,14 +37,16 @@ export class StartupService {
   private viaHttp(resolve: any, reject: any) {
     zip(
       this.httpClient.get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`),
-      this.httpClient.get('assets/tmp/app-data.json')
+      this.httpClient.get('assets/tmp/app-data-megasite.json')
     ).pipe(
       // 接收其他拦截器后产生的异常消息
       catchError(([langData, appData]) => {
-          resolve(null);
-          return [langData, appData];
+        resolve(null);
+        return [langData, appData];
       })
     ).subscribe(([langData, appData]) => {
+      console.info(langData);
+      console.info(appData);
       // setting language data
       this.translate.setTranslation(this.i18n.defaultLang, langData);
       this.translate.setDefaultLang(this.i18n.defaultLang);
@@ -62,12 +64,12 @@ export class StartupService {
       // 设置页面标题的后缀
       this.titleService.suffix = res.app.name;
     },
-    () => { },
-    () => {
-      resolve(null);
-    });
+      () => { },
+      () => {
+        resolve(null);
+      });
   }
-  
+
   private viaMockI18n(resolve: any, reject: any) {
     this.httpClient
       .get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`)
@@ -78,7 +80,7 @@ export class StartupService {
         this.viaMock(resolve, reject);
       });
   }
-  
+
   private viaMock(resolve: any, reject: any) {
     // const tokenData = this.tokenService.get();
     // if (!tokenData.token) {
@@ -133,9 +135,9 @@ export class StartupService {
     // https://github.com/angular/angular/issues/15088
     return new Promise((resolve, reject) => {
       // http
-      // this.viaHttp(resolve, reject);
+      this.viaHttp(resolve, reject);
       // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      this.viaMockI18n(resolve, reject);
+      // this.viaMockI18n(resolve, reject);
 
     });
   }

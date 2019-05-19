@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <div class="modal-title">View - {{ record.approval_no }} </div>
+</div>
+<nz-spin *ngIf="!i" class="modal-spin"></nz-spin>
+<div sv-container *ngIf="i">
+  <sv label="Approval NO.">{{ i.approval_no }}</sv>
+  <sv label="Type">{{ i.approval_type }}</sv>
+  <sv label="Sub Type">{{ i.sub_type }}</sv>
+  <sv label="Description">{{ i.description }}</sv>
+  <sv label="Effective Date">{{ i.effective_date }}</sv>
+  <sv label="Expiry Date">{{ i.expiry_date }}</sv>
+  <sv label="Standard">{{ i.standard }}</sv>
+  <sv label="Reference">{{ i.reference }}</sv>
+  <sv label="Status">{{ i.status }}</sv>
+  <sv label="Notes">{{ i.notes }}</sv>
+</div>
+<div class="modal-footer">
+  <button nz-button type="button" (click)="close()">关闭</button>
+</div>

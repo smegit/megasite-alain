@@ -1,0 +1,71 @@
+{
+  "app": {
+    "name": "Alain",
+    "description": "Ng-zorro admin panel front-end framework"
+  },
+  "user": {
+    "name": "Admin",
+    "avatar": "./assets/tmp/img/avatar.jpg",
+    "email": "cipchk@qq.com"
+  },
+  "menu": [
+    {
+      "text": "主导航",
+      "i18n": "menu.main",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "text": "Category",
+          "link": "/category",
+          "i18n": "menu.categories",
+          "icon": "anticon anticon-dashboard"
+        },
+        {
+          "text": "Products",
+          "link": "/products",
+          "i18n": "menu.products",
+          "icon": "anticon anticon-dashboard"
+        },
+        {
+          "text": "Features",
+          "i18n": "menu.features",
+          "icon": "anticon anticon-rocket"
+        },
+        {
+          "text": "Approvals",
+          "link": "/approval",
+          "i18n": "menu.approvals",
+          "icon": "anticon anticon-appstore",
+          "badge": 2
+        },
+        {
+          "text": "System Controls",
+          "i18n": "menu.system-control",
+          "icon": "anticon anticon-appstore",
+          "badge": 2
+        }
+      ]
+    },
+    {
+      "text": "More",
+      "i18n": "menu.more",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "text": "Profile",
+          "i18n": "menu.profile",
+          "icon": "anticon anticon-cloud",
+          "children": []
+        },
+        {
+          "text": "Settings",
+          "i18n": "menu.extras.settings",
+          "icon": "anticon anticon-link",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
