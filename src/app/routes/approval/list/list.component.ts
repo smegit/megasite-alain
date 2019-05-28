@@ -33,7 +33,7 @@ export class ApprovalListComponent implements OnInit {
 
   };
   columns: STColumn[] = [
-    { title: 'Approval NO.', index: 'approval_no' },
+    { title: 'Approval NO.', index: 'approval_no', sort: true },
     { title: 'Type', index: 'approval_type' },
     { title: 'Effective Date', index: 'effective_date' },
     { title: 'Expiry Date', index: 'expiry_date' },
@@ -61,16 +61,23 @@ export class ApprovalListComponent implements OnInit {
   }
 
   add() {
+    console.info('add called');
     // this.modal
     //   .createStatic(FormEditComponent, { i: { id: 0 } })
     //   .subscribe(() => this.st.reload());
+    this.modal.createStatic(ApprovalListEditComponent, { i: { id: 0 } }).subscribe((res) => {
+      console.info('add window close');
+      console.info(res);
+      this.st.reload();
+    }
+    );
   }
 
   getData(limit?: string, offset?: string) {
     const l = limit ? limit : '10';
     const o = offset ? offset : '0';
     this.loading = true;
-    this.approvalSrv.getApproval(l, o).subscribe(res => {
+    this.approvalSrv.getApprovals(l, o).subscribe(res => {
       this.data = res.rows;
       this.total = res.count;
       this.loading = false;
@@ -116,7 +123,9 @@ export class ApprovalListComponent implements OnInit {
       }
     })
       .subscribe(res => {
+        console.info('editwindow closed');
         console.info(res);
+        this.st.reload();
       });
   }
 
