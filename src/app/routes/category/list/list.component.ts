@@ -2,44 +2,77 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent } from '@delon/abc';
 import { SFSchema } from '@delon/form';
+import { CategoryListEditComponent } from './edit/edit.component';
+import { CategoryService } from '../../../services/category/category.service';
 
 @Component({
   selector: 'app-category-list',
   templateUrl: './list.component.html',
 })
 export class CategoryListComponent implements OnInit {
-  url = `/user`;
+  loading = true;
+  total: Number = 0;
+  data: any[] = [];
+
   searchSchema: SFSchema = {
     properties: {
       no: {
         type: 'string',
-        title: '编号'
+        title: 'Id'
       }
     }
   };
   @ViewChild('st') st: STComponent;
   columns: STColumn[] = [
-    { title: 'Name', index: 'no' },
-    { title: 'Description', type: 'number', index: 'callNo' },
-    { title: 'Status', type: 'img', width: '50px', index: 'avatar' },
-    { title: 'Date', type: 'date', index: 'updatedAt' },
+    { title: 'Name', index: 'name' },
+    { title: 'Description', index: 'description' },
+    { title: 'Parent', index: 'parent_id' },
     {
       title: '',
       buttons: [
-        // { text: '查看', click: (item: any) => `/form/${item.id}` },
-        // { text: '编辑', type: 'static', component: FormEditComponent, click: 'reload' },
+        { text: 'View', click: (record: any) => { this.openView(record) } },
+        { text: 'Edit', click: (record: any) => { this.openEdit(record) } },
       ]
     }
   ];
 
-  constructor(private http: _HttpClient, private modal: ModalHelper) { }
+  constructor(
+    private http: _HttpClient,
+    private modal: ModalHelper,
+    private cateSrv: CategoryService
+  ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.getData();
+  }
 
+  getData(limit?: string, offset?: string) {
+    const l = limit ? limit : '10';
+    const o = offset ? offset : '0';
+    this.cateSrv.getCategories(l, o).subscribe(
+      res => {
+        this.data = res.rows;
+        this.total = res.count;
+        this.loading = false;
+        console.info(res);
+      },
+      err => console.error('error', err),
+    );
+  }
   add() {
-    // this.modal
-    //   .createStatic(FormEditComponent, { i: { id: 0 } })
-    //   .subscribe(() => this.st.reload());
+    console.info('add called');
+    this.modal
+      .createStatic(CategoryListEditComponent, { i: { id: 0 } }, { size: 'md' })
+      .subscribe(() => this.st.reload());
+  }
+  openView(item) {
+
+  }
+  openEdit(record) {
+    console.info('openEdit called');
+    console.info(record);
+    this.modal.createStatic(CategoryListEditComponent, { record }, { size: 'md' })
+      .subscribe(() => this.st.reload());
   }
 
 }

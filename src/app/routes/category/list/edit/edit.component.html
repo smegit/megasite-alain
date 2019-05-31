@@ -1,0 +1,101 @@
+<div class="modal-header">
+  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Category {{ record.id }} </div>
+  <ng-template #addNew>
+    <div class="modal-title">Add Category</div>
+  </ng-template>
+</div>
+<!-- <nz-spin *ngIf="!i" class="modal-spin"></nz-spin> -->
+<!-- <sf *ngIf="i" #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+    <button nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid" [nzLoading]="http.loading">保存</button>
+  </div>
+</sf> -->
+
+<form nz-form [formGroup]="categoryForm">
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="name">Name
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="name" id="name" />
+      <nz-form-explain *ngIf="categoryForm.get('name')?.dirty && categoryForm.get('name')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">Description
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <textarea formControlName="description" nz-input rows="2" placeholder="write any thing"></textarea>
+      <nz-form-explain *ngIf="categoryForm.get('description')?.dirty && categoryForm.get('description')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="parent_id">Parent
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="parent_id" id="parent_id" />
+      <nz-form-explain *ngIf="categoryForm.get('parent_id')?.dirty && categoryForm.get('parent_id')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Image
+    </nz-form-label>
+    <nz-form-control [nzMd]="5" [nzSm]="24">
+      <nz-upload [nzFileList]="fileList" [nzBeforeUpload]="beforeUpload" [nzRemove]="remove" [nzShowUploadList]="false" [nzData]="uploadData">
+        <button nz-button><i nz-icon nzType="upload"></i><span>Select Image</span></button>
+      </nz-upload>
+      <!-- <textarea formControlName="notes" nz-input rows="2" placeholder="write any thing"></textarea> -->
+      <!-- <input nz-input formControlName="description" id="description" />
+        <nz-form-explain *ngIf="approvalForm.get('standard')?.dirty && approvalForm.get('standard')?.errors">
+          The input is invalid.
+        </nz-form-explain> -->
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-table *ngIf="fileList.length > 0" #editRowTable nzBordered [nzData]="fileList" [nzSize]="'small'" [nzFrontPagination]="false"
+    [nzShowPagination]="false">
+    <thead>
+      <tr>
+        <th>File</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+      <tr *ngFor="let data of editRowTable.data" class="editable-row" cdkDrag>
+        <td>{{ data.name }}</td>
+        <td>
+          {{ data.uid }}
+        </td>
+        <td>
+          <div class="editable-cell" *ngIf="data.id > 0; else editTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, $event)">
+              {{ data.description }}
+            </div>
+          </div>
+          <ng-template #editTpl>
+            <input type="text" nz-input [(ngModel)]="data.description" [ngModelOptions]="{standalone: true}" />
+          </ng-template>
+        </td>
+        <td>
+          <a nz-popconfirm nzTitle="Sure to delete?" (nzOnConfirm)="deleteRow(data)">Delete</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">Close</button>
+    <button nz-button type="submit" nzType="primary" (click)="submitForm()" [nzLoading]="http.loading">Save</button>
+  </div>
+</form>

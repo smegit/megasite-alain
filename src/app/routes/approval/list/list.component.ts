@@ -12,7 +12,6 @@ import { ApprovalListEditComponent } from './edit/edit.component';
   templateUrl: './list.component.html',
 })
 export class ApprovalListComponent implements OnInit {
-  url = `/user`;
   loading = true;
   total: Number = 0;
   data: any[] = [];
