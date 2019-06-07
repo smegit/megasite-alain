@@ -1,7 +1,7 @@
 import { environment } from "../../../environments/environment";
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 
 const baseUrl = environment.apiUrl;
 
@@ -42,5 +42,15 @@ export class CategoryService {
   // delete a attachment
   deleteItsAttachment(id, attachment_id): Observable<any> {
     return this._httpClient.delete(`${this.categoryUrl}/${id}/attachment/${attachment_id}`);
+  }
+
+  // get all categories
+  getAll(): Observable<any> {
+    return this._httpClient.get(`${this.categoryUrl}/all`);
+  }
+
+  // get all attributes that belong to a category
+  getItsAttributes(id): Observable<any> {
+    return this._httpClient.get(`${this.categoryUrl}/${id}/attribute`);
   }
 }

@@ -35,7 +35,7 @@
     </nz-form-control>
   </nz-form-item>
 
-  <nz-form-item>
+  <!-- <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="parent_id">Parent
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
@@ -44,7 +44,17 @@
         The input is invalid.
       </nz-form-explain>
     </nz-form-control>
+  </nz-form-item> -->
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Attributes
+    </nz-form-label>
+    <nz-form-control [nzMd]="18" [nzSm]="24">
+      <nz-transfer [nzDataSource]="transferListSource" [nzDisabled]="disabled" [nzTitles]="['Source', 'Target']" nzShowSearch (nzChange)="change($event)">
+      </nz-transfer>
+    </nz-form-control>
   </nz-form-item>
+
 
   <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Image

@@ -18,8 +18,20 @@
         {
           "text": "Category",
           "link": "/category",
-          "i18n": "menu.categories",
-          "icon": "anticon anticon-dashboard"
+          "i18n": "menu.category",
+          "icon": "anticon anticon-dashboard",
+          "children": [
+            {
+              "text": "Category",
+              "link": "/category",
+              "i18n": "menu.category"
+            },
+            {
+              "text": "Attributes",
+              "link": "/category/attribute",
+              "i18n": "menu.category.attribute"
+            }
+          ]
         },
         {
           "text": "Products",

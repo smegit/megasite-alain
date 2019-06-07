@@ -3,11 +3,15 @@ import { SharedModule } from '@shared';
 import { CategoryRoutingModule } from './category-routing.module';
 import { CategoryListComponent } from './list/list.component';
 import { CategoryListEditComponent } from './list/edit/edit.component';
+import { CategoryAttributeComponent } from './attribute/attribute.component';
+import { CategoryAttributeEditComponent } from './attribute/edit/edit.component';
 
 const COMPONENTS = [
-  CategoryListComponent];
+  CategoryListComponent,
+  CategoryAttributeComponent];
 const COMPONENTS_NOROUNT = [
-  CategoryListEditComponent];
+  CategoryListEditComponent,
+  CategoryAttributeEditComponent];
 
 @NgModule({
   imports: [

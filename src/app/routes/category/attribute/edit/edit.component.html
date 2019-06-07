@@ -1,0 +1,88 @@
+<div class="modal-header">
+  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Attribute {{ record.id }} </div>
+  <ng-template #addNew>
+    <div class="modal-title">Add Attribute</div>
+  </ng-template>
+</div>
+<!-- <nz-spin *ngIf="!i" class="modal-spin"></nz-spin> -->
+<!-- <sf *ngIf="i" #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+    <button nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid" [nzLoading]="http.loading">保存</button>
+  </div>
+</sf> -->
+
+
+<form nz-form [formGroup]="attributeForm">
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="name">Name
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="name" id="name" />
+      <nz-form-explain *ngIf="attributeForm.get('name')?.dirty && attributeForm.get('name')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">Description
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="description" id="description" />
+      <nz-form-explain *ngIf="attributeForm.get('description')?.dirty && attributeForm.get('description')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="ui_type">UI Type
+      <!-- <span>
+        <i nz-icon nz-tooltip nzTitle="What do you want other to call you" type="question-circle" theme="outline"></i>
+      </span> -->
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <!-- <input nz-input formControlName="ui_type" id="ui_type" /> -->
+
+      <nz-select formControlName="ui_type">
+        <nz-option *ngFor="let option of listOfUiType" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+      </nz-select>
+      <nz-form-explain *ngIf="attributeForm.get('ui_type')?.dirty && attributeForm.get('ui_type')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <!-- <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="input_type">Input Type
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="input_type" id="input_type" />
+      <nz-form-explain *ngIf="attributeForm.get('input_type')?.dirty && attributeForm.get('input_type')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item> -->
+
+  <nz-form-item
+    *ngIf="attributeForm.get('ui_type')?.value == 'Single Selection' || attributeForm.get('ui_type')?.value == 'Multi Selection' ">
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="input_type">Options
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <nz-select formControlName="options" [nzShowArrow]="false" [nzMode]="'tags'">
+      </nz-select>
+      <nz-form-explain *ngIf="attributeForm.get('input_type')?.dirty && attributeForm.get('input_type')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">Close</button>
+    <button nz-button type="submit" nzType="primary" (click)="submitForm()" [nzLoading]="http.loading">Save</button>
+  </div>
+
+</form>

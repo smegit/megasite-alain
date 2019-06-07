@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { STComponent, STColumn, STChange, STPage } from '@delon/abc';
+import { _HttpClient, ModalHelper } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { ProductService } from '../../../services/product/product.service';
+import { ProductsProductsEditComponent } from './edit/edit.component';
 
 
 @Component({
@@ -60,7 +62,8 @@ export class ProductsComponent implements OnInit {
       title: 'Action',
       buttons: [
         {
-          text: 'Edit'
+          text: 'Edit',
+          click: (record: any) => this.openEdit(record),
         },
         // {
         //   text: 'Delete'
@@ -92,7 +95,7 @@ export class ProductsComponent implements OnInit {
 
   constructor(
     private httpClient: HttpClient,
-    private modal: NzModalService,
+    private modal: ModalHelper,
     private prodSrv: ProductService
   ) { }
 
@@ -141,15 +144,34 @@ export class ProductsComponent implements OnInit {
 
   }
 
+  // add new product
+  add() {
+    console.info('add called');
+    this.modal.createStatic(ProductsProductsEditComponent, { i: { id: 0 } }, { size: 'md' })
+      .subscribe(res => {
+        console.info(res);
+        this.st.reload();
+      })
+  }
+  openEdit(record) {
+    console.info('openEdit called');
+    this.modal.createStatic(ProductsProductsEditComponent, { record }, { size: 'md' }).subscribe(
+      res => {
+        console.info(res);
+        this.st.reload();
+      }
+    )
+  }
+
   showConfirmModal(record) {
     console.info('showConfirmModal called');
     console.info(record);
-    this.confirmToDelModal = this.modal.confirm({
-      nzTitle: 'Do you want to delete this item?',
-      nzContent: 'When clicked the OK button, the item will be deleted permanently.',
-      nzOnOk: () => {
-        console.info('confirm clicked');
-      }
-    })
+    // this.confirmToDelModal = this.modal.confirm({
+    //   nzTitle: 'Do you want to delete this item?',
+    //   nzContent: 'When clicked the OK button, the item will be deleted permanently.',
+    //   nzOnOk: () => {
+    //     console.info('confirm clicked');
+    //   }
+    // })
   }
 }
