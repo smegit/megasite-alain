@@ -65,7 +65,7 @@ export class CategoryListEditComponent implements OnInit {
         this.transferListSource = res.map(obj => {
           return {
             key: obj.id,
-            title: obj.name,
+            title: obj.label,
             direction: 'left',
           }
         });
@@ -90,8 +90,6 @@ export class CategoryListEditComponent implements OnInit {
             }
           );
         }
-
-
       }
     );
 

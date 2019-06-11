@@ -5,7 +5,8 @@ import { SFSchema, SFUISchema } from '@delon/form';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { CategoryService } from 'app/services/category/category.service';
 import { ProductService } from 'app/services/product/product.service';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
+import { ApprovalService } from 'app/services/approval/approval.service';
 
 @Component({
   selector: 'app-products-products-edit',
@@ -20,9 +21,11 @@ export class ProductsProductsEditComponent implements OnInit {
   nestedForm: FormGroup;
   baseForm: FormGroup;
   controlArray: Array<{ uiType: string; controlInstance: string }> = [];
+  transferListSource: any[] = [];
   //listOfCategory: Array<{ label: string; value: string }> = [];
   listOfCategory: any[] = [];
   fileList: UploadFile[] = [];
+  approvalList: any[] = [];
   fileTypeOptions: Array<{ label: string; value: string }> = [
     { label: 'Image', value: 'Image' },
     { label: 'Schematic', value: 'Schematic' },
@@ -38,6 +41,7 @@ export class ProductsProductsEditComponent implements OnInit {
     private fb: FormBuilder,
     private cateSrv: CategoryService,
     private prodSrv: ProductService,
+    private approvalSrv: ApprovalService,
   ) { }
 
   ngOnInit(): void {
@@ -51,29 +55,85 @@ export class ProductsProductsEditComponent implements OnInit {
 
     this.nestedForm = this.fb.group({});
 
+    // fork join two observables
+    let allApprovals = this.approvalSrv.getAll();
+    let allCategories = this.cateSrv.getAll();
 
-    // load category info
-    this.cateSrv.getAll().subscribe(
-      res => {
-        this.listOfCategory = res.map(res => {
-          return {
-            value: res.id.toString(),
-            label: res.name,
-          }
+    forkJoin([allApprovals, allCategories]).subscribe(results => {
+      this.transferListSource = results[0].map(obj => {
+        return {
+          id: obj.id,
+          title: obj.approval_no,
+          direction: 'left'
+        }
+      });
+      this.listOfCategory = results[1].map(res => {
+        return {
+          value: res.id.toString(),
+          label: res.name,
+        }
+      });
+
+      if (this.record.id > 0)
+        this.prodSrv.getProduct(`${this.record.id}`).subscribe(res => {
+          console.info(res);
+          this.i = res;
+          // this.categoryId = res.type;
+          this.approvalList = res.approval.map(obj => obj.id);
+          this.productForm.patchValue(res);
+          this.transferListSource = this.transferListSource.map(obj => {
+            return {
+              id: obj.id,
+              title: obj.title,
+              direction: this.approvalList.includes(obj.id) ? 'right' : 'left',
+            }
+          })
+          this.fileList = res.attachment;
+          //this.productForm.setValue(res);
+          // this.nestedForm.patchValue(res.data);
+          console.info(this.productForm);
         });
-        console.info(this.listOfCategory);
-        if (this.record.id > 0)
-          this.prodSrv.getProduct(`${this.record.id}`).subscribe(res => {
-            console.info(res);
-            this.i = res;
-            // this.categoryId = res.type;
-            this.productForm.patchValue(res);
-            //this.productForm.setValue(res);
-            this.nestedForm.patchValue(res.data);
-            console.info(this.productForm);
-          });
-      }
-    );
+
+
+    })
+
+    // // get all approvals
+    // this.approvalSrv.getAll().subscribe(
+    //   res => {
+    //     console.info(res);
+    //     this.transferListSource = res.map(obj => {
+    //       return {
+    //         id: obj.id,
+    //         title: obj.approval_no,
+    //         direction: 'left'
+    //       }
+    //     })
+    //   }
+    // );
+
+    // // load category info
+    // this.cateSrv.getAll().subscribe(
+    //   res => {
+    //     this.listOfCategory = res.map(res => {
+    //       return {
+    //         value: res.id.toString(),
+    //         label: res.name,
+    //       }
+    //     });
+    //     console.info(this.listOfCategory);
+    //     if (this.record.id > 0)
+    //       this.prodSrv.getProduct(`${this.record.id}`).subscribe(res => {
+    //         console.info(res);
+    //         this.i = res;
+    //         // this.categoryId = res.type;
+    //         this.productForm.patchValue(res);
+    //         this.fileList = res.attachment;
+    //         //this.productForm.setValue(res);
+    //         // this.nestedForm.patchValue(res.data);
+    //         console.info(this.productForm);
+    //       });
+    //   }
+    // );
     // const children: Array<{ label: string; value: string }> = [];
     // for (let i = 10; i < 36; i++) {
     //   children.push({ label: i.toString(36) + i, value: i.toString(36) + i });
@@ -135,6 +195,7 @@ export class ProductsProductsEditComponent implements OnInit {
             return {
               uiType: attr.ui_type,
               controlInstance: attr.name,
+              controlLabel: attr.label,
               options: attr.options,
             }
           });
@@ -148,8 +209,11 @@ export class ProductsProductsEditComponent implements OnInit {
           this.controlArray = control;
           console.info(this.controlArray);
           // this.productForm.patchValue(this.i);
-          this.nestedForm.patchValue(this.i.data);
-
+          console.info(this.i);
+          // if select an existing product then load nested form detail
+          if (this.i.hasOwnProperty('data')) {
+            this.nestedForm.patchValue(this.i.data);
+          }
         }
       }
     );
@@ -187,6 +251,10 @@ export class ProductsProductsEditComponent implements OnInit {
         }
       }
 
+      // append approval list
+      formData.append('approval_list', JSON.stringify(this.approvalList));
+      console.info(this.approvalList);
+
       if (this.record.id > 0) {
         this.prodSrv.updateProduct(this.record.id, formData).subscribe(
           res => {
@@ -207,5 +275,34 @@ export class ProductsProductsEditComponent implements OnInit {
 
     }
 
+  }
+
+  change(evt: {}): void {
+    console.log('nzChange', evt);
+    if (Array.isArray(evt['list'])) {
+      if (evt['from'] === 'left' && evt['to'] === 'right') {
+        evt['list'].forEach(e => {
+          this.approvalList.push(e.id);
+        });
+      } else if (evt['from'] === 'right' && evt['to'] === 'left') {
+        evt['list'].forEach(e => {
+          this.approvalList = this.approvalList.filter(attr => attr !== e.id);
+        });
+      }
+    }
+  }
+
+  deleteRow(data) {
+    console.info('deleteRow called');
+    console.info(data);
+    if (data.hasOwnProperty('id')) {
+      if (parseInt(data.id) > 0) {
+        this.prodSrv.deleteItsAttachment(this.record.id, data.id).subscribe(res => {
+          this.fileList = this.fileList.filter(d => d.uid !== data.uid);
+        });
+      }
+    } else {
+      this.fileList = this.fileList.filter(d => d.uid !== data.uid);
+    }
   }
 }

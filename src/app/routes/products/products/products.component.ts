@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { STComponent, STColumn, STChange, STPage } from '@delon/abc';
 import { _HttpClient, ModalHelper } from '@delon/theme';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ProductService } from '../../../services/product/product.service';
 import { ProductsProductsEditComponent } from './edit/edit.component';
 
@@ -96,6 +96,8 @@ export class ProductsComponent implements OnInit {
   constructor(
     private httpClient: HttpClient,
     private modal: ModalHelper,
+    private modalSrv: NzModalService,
+    private msgSrv: NzMessageService,
     private prodSrv: ProductService
   ) { }
 
@@ -166,12 +168,18 @@ export class ProductsComponent implements OnInit {
   showConfirmModal(record) {
     console.info('showConfirmModal called');
     console.info(record);
-    // this.confirmToDelModal = this.modal.confirm({
-    //   nzTitle: 'Do you want to delete this item?',
-    //   nzContent: 'When clicked the OK button, the item will be deleted permanently.',
-    //   nzOnOk: () => {
-    //     console.info('confirm clicked');
-    //   }
-    // })
+    this.modalSrv.confirm({
+      nzTitle: 'Do you want to delete this item?',
+      nzContent: 'When clicked the OK button, the item will be deleted permanently.',
+      nzOnOk: () => {
+        console.info('confirm clicked');
+        this.prodSrv.deleteProd(record.id).subscribe(res => {
+          console.info(res);
+          if (res === null) {
+            this.msgSrv.create('success', `Product ${record.model_number} has been deleted successfully.`)
+          }
+        })
+      }
+    })
   }
 }

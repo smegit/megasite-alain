@@ -18,10 +18,22 @@
     <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="name">Name
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
-      <input nz-input formControlName="name" id="name" />
+      <input nz-input formControlName="name" id="name"
+        placeholder="only allow lowercase and underscore, eg. 'function_list'" />
       <nz-form-explain *ngIf="attributeForm.get('name')?.dirty && attributeForm.get('name')?.errors">
-        The input is invalid.
+        Only allow lowercase and underscore.
       </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="label">Label
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="label" id="label" placeholder="optional" />
+      <!-- <nz-form-explain *ngIf="attributeForm.get('label')?.dirty && attributeForm.get('label')?.errors">
+        The input is invalid.
+      </nz-form-explain> -->
     </nz-form-control>
   </nz-form-item>
 
@@ -50,7 +62,7 @@
         <nz-option *ngFor="let option of listOfUiType" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
       </nz-select>
       <nz-form-explain *ngIf="attributeForm.get('ui_type')?.dirty && attributeForm.get('ui_type')?.errors">
-        The input is invalid.
+        This field is required.
       </nz-form-explain>
     </nz-form-control>
   </nz-form-item>
@@ -69,13 +81,13 @@
 
   <nz-form-item
     *ngIf="attributeForm.get('ui_type')?.value == 'Single Selection' || attributeForm.get('ui_type')?.value == 'Multi Selection' ">
-    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="input_type">Options
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="input_type">Options
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <nz-select formControlName="options" [nzShowArrow]="false" [nzMode]="'tags'">
       </nz-select>
-      <nz-form-explain *ngIf="attributeForm.get('input_type')?.dirty && attributeForm.get('input_type')?.errors">
-        The input is invalid.
+      <nz-form-explain *ngIf="attributeForm.get('options')?.dirty && attributeForm.get('options')?.errors">
+        This filed is required.
       </nz-form-explain>
     </nz-form-control>
   </nz-form-item>

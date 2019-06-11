@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzModalRef, NzMessageService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { SFSchema, SFUISchema } from '@delon/form';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { AttributeService } from '../../../../services/attribute/attribute.service';
 
 @Component({
@@ -29,13 +29,38 @@ export class CategoryAttributeEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.attributeForm = this.fb.group({
-      name: [null, [Validators.required]],
+      name: [null, [this.nameValidator]],
+      label: [null],
       description: [null],
-      ui_type: [null],
+      ui_type: [null, [Validators.required]],
       input_type: [null],
       options: [null]
     });
 
+
+    // define 'options' validator on condition
+    this.attributeForm.get('ui_type').valueChanges.subscribe(
+      (uiType: string) => {
+        this.attributeForm.get('options').clearValidators();
+        if (uiType === 'Single Selection' || uiType === 'Multi Selection') {
+          this.attributeForm.get('options').setValidators([Validators.required]);
+        }
+        // this.attributeForm.get('options').updateValueAndValidity();
+      }
+    );
+
+    // auto-complete 'label' field
+    this.attributeForm.get('name').valueChanges.subscribe(
+      (name: string) => {
+        console.info('name changed');
+        const splitStr = name.toLowerCase().split('_');
+        for (let i = 0; i < splitStr.length; i++) {
+          splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        const label = splitStr.join(' ');
+        this.attributeForm.get('label').setValue(label);
+      }
+    )
     // // get all attributes
     // this.attributeSrv.getAllAttributes().subscribe(
     //   (res) => {
@@ -57,33 +82,44 @@ export class CategoryAttributeEditComponent implements OnInit {
     const attributeFormValue = this.attributeForm.value;
     console.info(attributeFormValue);
 
-    if (this.record.id > 0) { // update attribute
-      this.attributeSrv.updateAttribute(this.record.id, attributeFormValue).subscribe(
-        (res) => {
-          console.info(res);
-          this.modal.close({ success: true });
-          this.msgSrv.create('success', `Attribute ${res.name} has been updated successfully`);
-        },
-        (err) => {
-          this.modal.destroy();
-          this.msgSrv.create('error', `Failed to update attribute ${this.record.name}.`);
-        }
-      );
-    } else {
-      this.attributeSrv.createAttribute(attributeFormValue).subscribe(
-        (res) => {
-          console.info(res);
-          this.modal.close({ success: true });
-          this.msgSrv.create('success', `Attribute ${res.name} has been created successfully`);
-        },
-        (err) => {
-          console.info(err);
-          this.modal.destroy();
-          this.msgSrv.create('error', `Failed to create attribute ${attributeFormValue.name}`);
-        }
-      );
+
+    // Validate form value
+    for (const i in this.attributeForm.controls) {
+      this.attributeForm.controls[i].markAsDirty();
+      this.attributeForm.controls[i].updateValueAndValidity();
+    }
+
+    if (this.attributeForm.valid) {
+      if (this.record.id > 0) { // update attribute
+        this.attributeSrv.updateAttribute(this.record.id, attributeFormValue).subscribe(
+          (res) => {
+            console.info(res);
+            this.modal.close({ success: true });
+            this.msgSrv.create('success', `Attribute ${res.label} has been updated successfully`);
+          },
+          (err) => {
+            this.modal.destroy();
+            this.msgSrv.create('error', `Failed to update attribute ${this.record.label}.`);
+          }
+        );
+      } else {
+        this.attributeSrv.createAttribute(attributeFormValue).subscribe(
+          (res) => {
+            console.info(res);
+            this.modal.close({ success: true });
+            this.msgSrv.create('success', `Attribute ${res.label} has been created successfully`);
+          },
+          (err) => {
+            console.info(err);
+            this.modal.destroy();
+            this.msgSrv.create('error', `Failed to create attribute ${attributeFormValue.label}`);
+          }
+        );
+
+      }
 
     }
+
   }
 
   save(value: any) {
@@ -95,5 +131,16 @@ export class CategoryAttributeEditComponent implements OnInit {
 
   close() {
     this.modal.destroy();
+  }
+
+  // Validators
+  nameValidator = (control: FormControl): { [s: string]: boolean } => {
+
+    if (!control.value) {
+      return { required: true };
+    } else if (!/^[a-z]+(?:_+[a-z]+)*$/.test(control.value)) {
+      return { name: true, error: true };
+    }
+    return {};
   }
 }

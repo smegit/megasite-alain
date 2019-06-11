@@ -62,4 +62,9 @@ export class ApprovalService {
     return this._httpClient.delete(`${this.approvalUrl}/${id}/attachment/${attachment_id}`);
 
   }
+
+  // get all approvals (brife list)
+  getAll(): Observable<any> {
+    return this._httpClient.get(`${this.approvalUrl}/all`);
+  }
 }

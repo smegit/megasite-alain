@@ -46,4 +46,13 @@ export class ProductService {
   updateProduct(id, payload): Observable<any> {
     return this._httpClient.put(`${this.productsUrl}/${id}`, payload);
   }
+  // DELETE the attachment associated to the product
+  deleteItsAttachment(id, attachment_id): Observable<any> {
+    return this._httpClient.delete(`${this.productsUrl}/${id}/attachment/${attachment_id}`);
+  }
+
+  // DELETE the product and the links to it and attachments associated but keep approvals
+  deleteProd(id): Observable<any> {
+    return this._httpClient.delete(`${this.productsUrl}/${id}`);
+  }
 }

@@ -31,9 +31,10 @@ export class CategoryAttributeComponent implements OnInit {
   };
   columns: STColumn[] = [
     { title: 'Name', index: 'name' },
+    { title: 'Label', index: 'label' },
     { title: 'Description', index: 'description' },
     { title: 'UI Type', index: 'ui_type' },
-    { title: 'Input Type', index: 'input_type' },
+    // { title: 'Input Type', index: 'input_type' },
     {
       title: '',
       buttons: [

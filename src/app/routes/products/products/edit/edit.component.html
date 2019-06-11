@@ -52,7 +52,7 @@
 
   <form nz-form [formGroup]="nestedForm">
     <nz-form-item *ngFor="let control of controlArray; let i = index">
-      <nz-form-label [nzMd]="6" [nzSm]="24" [nzFor]="control.controlInstance">{{control.controlInstance}}
+      <nz-form-label [nzMd]="6" [nzSm]="24" [nzFor]="control.controlInstance">{{control.controlLabel}}
       </nz-form-label>
       <nz-form-control [nzMd]="16" [nzSm]="24">
         <input *ngIf="control.uiType == 'Input'" nz-input [formControlName]="control.controlInstance">
@@ -69,6 +69,17 @@
       </nz-form-control>
     </nz-form-item>
   </form>
+
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Approvals
+    </nz-form-label>
+    <nz-form-control [nzMd]="18" [nzSm]="24">
+      <nz-transfer [nzDataSource]="transferListSource" [nzDisabled]="disabled" [nzTitles]="['Source', 'Target']"
+        nzShowSearch (nzChange)="change($event)">
+      </nz-transfer>
+    </nz-form-control>
+  </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Attachment
