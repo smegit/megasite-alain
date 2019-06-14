@@ -53,4 +53,9 @@ export class CategoryService {
   getItsAttributes(id): Observable<any> {
     return this._httpClient.get(`${this.categoryUrl}/${id}/attribute`);
   }
+
+  // check if category name has been taken or not
+  checkName(name): Observable<any> {
+    return this._httpClient.get(`${this.categoryUrl}/check/${name}`);
+  }
 }

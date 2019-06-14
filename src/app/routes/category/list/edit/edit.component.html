@@ -18,8 +18,17 @@
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <input nz-input formControlName="name" id="name" />
-      <nz-form-explain *ngIf="categoryForm.get('name')?.dirty && categoryForm.get('name')?.errors">
-        The input is invalid.
+      <nz-form-explain *ngIf="categoryForm.get('name')?.dirty && categoryForm.get('name')?.errors ||
+              categoryForm.get('name')?.pending">
+        <ng-container *ngIf="categoryForm.get('name')?.hasError('required')">
+          Please input category name!
+        </ng-container>
+        <ng-container *ngIf="categoryForm.get('name')?.hasError('duplicated')">
+          The category already exist!
+        </ng-container>
+        <ng-container *ngIf="categoryForm.get('name')?.pending">
+          Validating...
+        </ng-container>
       </nz-form-explain>
     </nz-form-control>
   </nz-form-item>
@@ -50,7 +59,8 @@
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Attributes
     </nz-form-label>
     <nz-form-control [nzMd]="18" [nzSm]="24">
-      <nz-transfer [nzDataSource]="transferListSource" [nzDisabled]="disabled" [nzTitles]="['Source', 'Target']" nzShowSearch (nzChange)="change($event)">
+      <nz-transfer [nzDataSource]="transferListSource" [nzTitles]="['Source', 'Target']" nzShowSearch
+        (nzChange)="change($event)">
       </nz-transfer>
     </nz-form-control>
   </nz-form-item>
@@ -60,7 +70,8 @@
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Image
     </nz-form-label>
     <nz-form-control [nzMd]="5" [nzSm]="24">
-      <nz-upload [nzFileList]="fileList" [nzBeforeUpload]="beforeUpload" [nzRemove]="remove" [nzShowUploadList]="false" [nzData]="uploadData">
+      <nz-upload [nzFileList]="fileList" [nzBeforeUpload]="beforeUpload" [nzRemove]="remove" [nzShowUploadList]="false"
+        [nzData]="uploadData">
         <button nz-button><i nz-icon nzType="upload"></i><span>Select Image</span></button>
       </nz-upload>
       <!-- <textarea formControlName="notes" nz-input rows="2" placeholder="write any thing"></textarea> -->
@@ -71,8 +82,8 @@
     </nz-form-control>
   </nz-form-item>
 
-  <nz-table *ngIf="fileList.length > 0" #editRowTable nzBordered [nzData]="fileList" [nzSize]="'small'" [nzFrontPagination]="false"
-    [nzShowPagination]="false">
+  <nz-table *ngIf="fileList.length > 0" #editRowTable nzBordered [nzData]="fileList" [nzSize]="'small'"
+    [nzFrontPagination]="false" [nzShowPagination]="false">
     <thead>
       <tr>
         <th>File</th>

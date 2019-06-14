@@ -8,25 +8,27 @@
     <div nz-row [nzGutter]="{ xs: 8, sm:8, md: 8, lg: 24, xl: 48, xxl: 48 }">
       <div nz-col nzMd="6" nzSm="24">
         <nz-form-item [nzFlex]="true">
-          <nz-form-label [nzSpan]="8" nzFor="modelNumber">Model</nz-form-label>
+          <nz-form-label [nzSpan]="8" nzFor="model_number">Model</nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <input nz-input [(ngModel)]="q.modelNumber" name="modelNumber" placeholder="Please......" id="modelNumber">
+            <input nz-input [(ngModel)]="q.model_number" name="model_number" placeholder="Please......"
+              id="model_umber">
           </nz-form-control>
         </nz-form-item>
       </div>
 
       <div nz-col nzMd="6" nzSm="24">
         <nz-form-item [nzFlex]="'true'">
-          <nz-form-label [nzSpan]="8" nzFor="category">Category</nz-form-label>
+          <nz-form-label [nzSpan]="8" nzFor="type">Category</nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select [(ngModel)]="q.category" name="category" id="category" [nzPlaceHolder]="'Select...'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of category; let idx = index" [nzLabel]="i.text" [nzValue]="idx"></nz-option>
+            <nz-select [(ngModel)]="q.type" name="type" id="type" [nzPlaceHolder]="'Select...'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of listOfCategory; let idx = index" [nzLabel]="i.label" [nzValue]="i.value">
+              </nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
 
-      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
+      <!-- <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
         <nz-form-item [nzFlex]="true">
           <nz-form-label [nzSpan]="8" nzFor="aesthetic">Aesthetic</nz-form-label>
           <nz-form-control [nzSpan]="16">
@@ -44,26 +46,30 @@
             <input nz-input id="status">
           </nz-form-control>
         </nz-form-item>
-      </div>
+      </div> -->
 
-      <div nz-col [nzSpan]="expandForm ? 24 : 6" [class.text-right]="expandForm">
+      <!-- <div nz-col [nzSpan]="expandForm ? 24 : 6" [class.text-right]="expandForm">
         <button nz-button type="submit" [nzType]="'primary'">Search</button>
         <button nz-button type="reset" (click)="reset()" class="mx-sm">Reset</button>
         <a (click)="expandForm=!expandForm">{{expandForm ? 'Collapse' : 'Expand'}}
           <i class="anticon" [class.anticon-down]="!expandForm" [class.anticon-up]="expandForm"></i>
-          <!-- <i nz-icon [type]="expandForm ? 'down' : 'up'"></i> -->
+          <i nz-icon [type]="expandForm ? 'down' : 'up'"></i>
         </a>
+      </div> -->
+
+      <div nz-col nzMd="6" nzSm="24">
+        <button nz-button type="submit" [nzType]="'primary'">Search</button>
+        <button nz-button type="reset" (click)="reset()" class="mx-sm">Reset</button>
+        <!-- <a (click)="expandForm=!expandForm">{{expandForm ? 'Collapse' : 'Expand'}}
+          <i class="anticon" [class.anticon-down]="!expandForm" [class.anticon-up]="expandForm"></i>
+          <i nz-icon [type]="expandForm ? 'down' : 'up'"></i>
+        </a> -->
       </div>
 
 
 
     </div>
   </form>
-  <st #st [total]="total" [columns]="columns" [data]="data" [page]="page" [loading]="loading" (change)="stChange($event)"></st>
+  <st #st [total]="total" [columns]="columns" [data]="data" [page]="page" [loading]="loading"
+    (change)="stChange($event)"></st>
 </nz-card>
-
-<nz-select style="width: 200px;" nzShowSearch nzAllowClear nzPlaceHolder="Select a person" [(ngModel)]="selectedValue">
-  <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
-  <nz-option nzLabel="Lucy" nzValue="lucy"></nz-option>
-  <nz-option nzLabel="Tom" nzValue="tom"></nz-option>
-</nz-select>

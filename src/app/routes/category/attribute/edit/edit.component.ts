@@ -43,7 +43,7 @@ export class CategoryAttributeEditComponent implements OnInit {
       (uiType: string) => {
         this.attributeForm.get('options').clearValidators();
         if (uiType === 'Single Selection' || uiType === 'Multi Selection') {
-          this.attributeForm.get('options').setValidators([Validators.required]);
+          //this.attributeForm.get('options').setValidators([Validators.required]);
         }
         // this.attributeForm.get('options').updateValueAndValidity();
       }

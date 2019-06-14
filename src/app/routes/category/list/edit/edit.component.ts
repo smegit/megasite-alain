@@ -2,10 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzModalRef, NzMessageService, UploadFile } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { SFSchema, SFUISchema } from '@delon/form';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { CategoryService } from '../../../../services/category/category.service';
 import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { AttributeService } from '../../../../services/attribute/attribute.service';
+import { Observable, Observer } from 'rxjs';
 
 @Component({
   selector: 'app-category-list-edit',
@@ -98,6 +99,19 @@ export class CategoryListEditComponent implements OnInit {
 
   }
 
+
+  cateNameAsyncValidator = (control: FormControl) =>
+    new Observable((observer: Observer<ValidationErrors | null>) => {
+      this.cateSrv.checkName(control.value).subscribe(res => {
+        console.info(res);
+        if (res.success) {
+          observer.next(null);
+        } else {
+          observer.next({ error: true, duplicated: true });
+        }
+        observer.complete();
+      });
+    })
   beforeUpload = (file: UploadFile): boolean => {
     this.fileList = this.fileList.concat(file);
     this.uploadTable = this.uploadTable.concat(file);

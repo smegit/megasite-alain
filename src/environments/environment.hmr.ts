@@ -7,6 +7,8 @@ export const environment = {
   production: false,
   useHash: true,
   hmr: true,
+  apiUrl: 'http://10.1.1.123:7001/api',
+  uploadUrl: 'http://10.1.1.123:7001/api/upload'
 };
 
 /*

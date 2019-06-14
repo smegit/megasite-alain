@@ -80,7 +80,7 @@ export class I18NService implements AlainI18NService {
     const lans = this._langs.map(item => item.code);
     translate.addLangs(lans);
 
-    this._default = lans.includes(defaultLan) ? defaultLan : lans[0];
+    this._default = lans.includes(defaultLan) ? defaultLan : lans[2];
     this.updateLangData(this._default);
   }
 

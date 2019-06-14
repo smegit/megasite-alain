@@ -20,8 +20,17 @@
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <input nz-input #model formControlName="model_number" id="model_number" />
-      <nz-form-explain *ngIf="productForm.get('model_number')?.dirty && productForm.get('model_number')?.errors">
-        The input is invalid.
+      <nz-form-explain *ngIf="productForm.get('model_number')?.dirty && productForm.get('model_number')?.errors ||
+              productForm.get('model_number')?.pending">
+        <ng-container *ngIf="productForm.get('model_number')?.hasError('required')">
+          Please enter model number!
+        </ng-container>
+        <ng-container *ngIf="productForm.get('model_number')?.hasError('duplicated')">
+          The model already exist!
+        </ng-container>
+        <ng-container *ngIf="productForm.get('model_number')?.pending">
+          Validating...
+        </ng-container>
       </nz-form-explain>
     </nz-form-control>
   </nz-form-item>
@@ -75,8 +84,8 @@
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Approvals
     </nz-form-label>
     <nz-form-control [nzMd]="18" [nzSm]="24">
-      <nz-transfer [nzDataSource]="transferListSource" [nzDisabled]="disabled" [nzTitles]="['Source', 'Target']"
-        nzShowSearch (nzChange)="change($event)">
+      <nz-transfer [nzDataSource]="transferListSource" [nzTitles]="['Source', 'Target']" nzShowSearch
+        (nzChange)="change($event)">
       </nz-transfer>
     </nz-form-control>
   </nz-form-item>
@@ -108,7 +117,15 @@
     </thead>
     <tbody cdkDropList (cdkDropListDropped)="drop($event)">
       <tr *ngFor="let data of editRowTable.data" class="editable-row" cdkDrag>
-        <td>{{ data.name }}</td>
+        <!-- <td>{{ data.name }}</td> -->
+        <td>
+          <div *ngIf="data.id > 0; else noLinkTpl">
+            <a [href]="sanitize(data.url)" target="_blank">{{data.name}}</a>
+          </div>
+          <ng-template #noLinkTpl>
+            {{data.name}}
+          </ng-template>
+        </td>
 
         <td>
           <div class="editable-cell" *ngIf="data.id > 0; else editTypeTpl">

@@ -1,7 +1,13 @@
 <div class="alain-default__header-logo">
   <a [routerLink]="['/']" class="alain-default__header-logo-link">
-    <img class="alain-default__header-logo-expanded" src="./assets/logo-full.svg" alt="{{settings.app.name}}" style="max-height:40px;" />
-    <img class="alain-default__header-logo-collapsed" src="./assets/logo.svg" alt="{{settings.app.name}}" style="max-height:30px;" />
+    <!-- src="./assets/logo-full.svg"
+    src="./assets/logo.svg" 
+    alt="{{settings.app.name}}"
+    alt="{{settings.app.name}}"-->
+
+
+    <img class="alain-default__header-logo-expanded" style="max-height:40px;" />
+    <img class="alain-default__header-logo-collapsed" style="max-height:30px;" />
   </a>
 </div>
 <div class="alain-default__nav-wrap">
@@ -13,11 +19,11 @@
       </div>
     </li>
     <!-- Github Page -->
-    <li>
+    <!-- <li>
       <a class="alain-default__nav-item" href="//github.com/ng-alain/ng-alain" target="_blank">
         <i nz-icon type="github"></i>
       </a>
-    </li>
+    </li> -->
     <!-- Lock Page -->
     <li class="hidden-mobile">
       <div class="alain-default__nav-item" [routerLink]="['/lock']">
@@ -34,13 +40,13 @@
   <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>
   <ul class="alain-default__nav">
     <!-- Notify -->
-    <li>
+    <!-- <li>
       <header-notify></header-notify>
-    </li>
+    </li> -->
     <!-- Task -->
-    <li class="hidden-mobile">
+    <!-- <li class="hidden-mobile">
       <header-task></header-task>
-    </li>
+    </li> -->
     <!-- App Icons -->
     <li class="hidden-mobile">
       <header-icon></header-icon>

@@ -319,7 +319,7 @@ export class ApprovalListEditComponent implements OnInit {
   }
 
 
-  submitForm(value: any) {
+  submitForm() {
     console.info('submitForm called');
     console.info(this.approvalForm.value);
     const formData = new FormData();

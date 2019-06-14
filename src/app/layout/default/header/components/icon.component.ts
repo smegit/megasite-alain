@@ -8,7 +8,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
         <i class="anticon anticon-appstore"></i>
       </div>
       <div nz-menu class="wd-xl animated jello">
-        <nz-spin [nzSpinning]="loading" [nzTip]="'正在读取数据...'">
+        <nz-spin [nzSpinning]="loading" [nzTip]="'Reading...'">
           <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'" class="app-icons">
             <div nz-col [nzSpan]="6">
               <i class="anticon anticon-calendar bg-error text-white"></i>
@@ -52,7 +52,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 export class HeaderIconComponent {
   loading = true;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   change() {
     setTimeout(() => {

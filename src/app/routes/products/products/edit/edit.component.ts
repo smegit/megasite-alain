@@ -2,11 +2,12 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NzModalRef, NzMessageService, UploadFile } from 'ng-zorro-antd';
 import { _HttpClient, JSONP } from '@delon/theme';
 import { SFSchema, SFUISchema } from '@delon/form';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { CategoryService } from 'app/services/category/category.service';
 import { ProductService } from 'app/services/product/product.service';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, Observer } from 'rxjs';
 import { ApprovalService } from 'app/services/approval/approval.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-products-products-edit',
@@ -42,6 +43,7 @@ export class ProductsProductsEditComponent implements OnInit {
     private cateSrv: CategoryService,
     private prodSrv: ProductService,
     private approvalSrv: ApprovalService,
+    private domSanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -69,7 +71,7 @@ export class ProductsProductsEditComponent implements OnInit {
       });
       this.listOfCategory = results[1].map(res => {
         return {
-          value: res.id.toString(),
+          value: res.id,
           label: res.name,
         }
       });
@@ -305,4 +307,22 @@ export class ProductsProductsEditComponent implements OnInit {
       this.fileList = this.fileList.filter(d => d.uid !== data.uid);
     }
   }
+
+  sanitize(url: string) {
+    return this.domSanitizer.bypassSecurityTrustUrl(url);
+  }
+
+
+  prodModelAsyncValidator = (control: FormControl) =>
+    new Observable((observer: Observer<ValidationErrors | null>) => {
+      this.prodSrv.checkModel(control.value).subscribe(res => {
+        console.info(res);
+        if (res.success) {
+          observer.next(null);
+        } else {
+          observer.next({ error: true, duplicated: true });
+        }
+        observer.complete();
+      });
+    })
 }

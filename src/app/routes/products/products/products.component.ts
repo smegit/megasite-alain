@@ -5,6 +5,7 @@ import { _HttpClient, ModalHelper } from '@delon/theme';
 import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ProductService } from '../../../services/product/product.service';
 import { ProductsProductsEditComponent } from './edit/edit.component';
+import { CategoryService } from 'app/services/category/category.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { ProductsProductsEditComponent } from './edit/edit.component';
 export class ProductsComponent implements OnInit {
 
   confirmToDelModal: NzModalRef;
-
+  listOfCategory: any[] = [];
   q: any = {
 
   };
@@ -57,7 +58,7 @@ export class ProductsComponent implements OnInit {
     { title: 'ID', index: 'id', },
     { title: 'Model Number', index: 'model_number' },
     { title: 'Description', index: 'description' },
-    { title: 'Category', index: 'type' },
+    { title: 'Category', index: 'category.name' },
     {
       title: 'Action',
       buttons: [
@@ -98,13 +99,25 @@ export class ProductsComponent implements OnInit {
     private modal: ModalHelper,
     private modalSrv: NzModalService,
     private msgSrv: NzMessageService,
-    private prodSrv: ProductService
+    private prodSrv: ProductService,
+    private cateSrc: CategoryService,
+
   ) { }
 
 
   ngOnInit() {
     console.info('ngOnInit called');
     this.getData();
+
+    // get all categories
+    this.cateSrc.getAll().subscribe(res => {
+      this.listOfCategory = res.map(e => {
+        return {
+          value: e.id,
+          label: e.name
+        }
+      })
+    });
   }
 
   getData(limit?: string, offset?: string) {
@@ -117,7 +130,8 @@ export class ProductsComponent implements OnInit {
     const l = limit ? limit : '10';
     const o = offset ? offset : '0';
     this.loading = true;
-    this.prodSrv.getProds(l, o).subscribe(res => {
+    const query = JSON.stringify(this.q);
+    this.prodSrv.getProds(l, o, query).subscribe(res => {
       this.data = res.rows;
       this.total = res.count;
       this.loading = false;
@@ -127,6 +141,8 @@ export class ProductsComponent implements OnInit {
 
   reset() {
     console.info('reset called');
+    this.q = {};
+    this.getData();
   }
 
   stChange(e: STChange) {
@@ -176,7 +192,8 @@ export class ProductsComponent implements OnInit {
         this.prodSrv.deleteProd(record.id).subscribe(res => {
           console.info(res);
           if (res === null) {
-            this.msgSrv.create('success', `Product ${record.model_number} has been deleted successfully.`)
+            this.msgSrv.create('success', `Product ${record.model_number} has been deleted successfully.`);
+            this.st.reload();
           }
         })
       }
