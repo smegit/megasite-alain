@@ -173,6 +173,7 @@ export class ProductsComponent implements OnInit {
   }
   openEdit(record) {
     console.info('openEdit called');
+    console.info(record);
     this.modal.createStatic(ProductsProductsEditComponent, { record }, { size: 'md' }).subscribe(
       res => {
         console.info(res);

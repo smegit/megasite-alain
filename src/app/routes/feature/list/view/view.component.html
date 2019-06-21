@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <div class="modal-title">View {{ record.name }} </div>
+</div>
+<nz-spin *ngIf="!i" class="modal-spin"></nz-spin>
+<sv-container *ngIf="i" size="large" col=1 labelWidth="150">
+  <sv label="Feature">{{ i.name  }}</sv>
+  <sv label="Short Description">{{ i.short_description}}</sv>
+  <sv label="Long Description">{{ i.long_description }}</sv>
+  <sv label="Type">{{ i.feature_type_name }}</sv>
+</sv-container>
+<div class="modal-footer">
+  <button nz-button type="button" (click)="close()">Close</button>
+</div>

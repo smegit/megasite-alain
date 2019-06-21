@@ -8,6 +8,7 @@ import { ProductService } from 'app/services/product/product.service';
 import { Observable, forkJoin, Observer } from 'rxjs';
 import { ApprovalService } from 'app/services/approval/approval.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FeatureService } from 'app/services/feature/feature.service';
 
 @Component({
   selector: 'app-products-products-edit',
@@ -25,6 +26,7 @@ export class ProductsProductsEditComponent implements OnInit {
   transferListSource: any[] = [];
   //listOfCategory: Array<{ label: string; value: string }> = [];
   listOfCategory: any[] = [];
+  featureOptions: any[] = [];
   fileList: UploadFile[] = [];
   approvalList: any[] = [];
   fileTypeOptions: Array<{ label: string; value: string }> = [
@@ -43,25 +45,28 @@ export class ProductsProductsEditComponent implements OnInit {
     private cateSrv: CategoryService,
     private prodSrv: ProductService,
     private approvalSrv: ApprovalService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private featureSrv: FeatureService,
   ) { }
 
   ngOnInit(): void {
-
+    console.info(this.record);
     this.productForm = this.fb.group({
       model_number: [null, [Validators.required]],
       description: [null],
       type: [null],
+      feature: [null]
       // data: this.fb.group(this.createData()),
     });
 
     this.nestedForm = this.fb.group({});
 
-    // fork join two observables
+    // fork join three observables
     let allApprovals = this.approvalSrv.getAll();
     let allCategories = this.cateSrv.getAll();
+    let allFeaturesByType = this.featureSrv.getFeaturesByType(this.record.type);
 
-    forkJoin([allApprovals, allCategories]).subscribe(results => {
+    forkJoin([allApprovals, allCategories, allFeaturesByType]).subscribe(results => {
       this.transferListSource = results[0].map(obj => {
         return {
           id: obj.id,
@@ -75,13 +80,21 @@ export class ProductsProductsEditComponent implements OnInit {
           label: res.name,
         }
       });
+      this.featureOptions = results[2].map(res => {
+        return {
+          value: res.id,
+          label: res.name,
+        }
+      });
 
-      if (this.record.id > 0)
+      if (this.record.id > 0) {
         this.prodSrv.getProduct(`${this.record.id}`).subscribe(res => {
           console.info(res);
           this.i = res;
           // this.categoryId = res.type;
           this.approvalList = res.approval.map(obj => obj.id);
+          res.feature = res.feature.map(obj => obj.id);
+          console.info(res);
           this.productForm.patchValue(res);
           this.transferListSource = this.transferListSource.map(obj => {
             return {
@@ -95,55 +108,13 @@ export class ProductsProductsEditComponent implements OnInit {
           // this.nestedForm.patchValue(res.data);
           console.info(this.productForm);
         });
+      } else {
+        // for newly created product, should validate model_number first
+        this.productForm.get('model_number').setAsyncValidators([this.prodModelAsyncValidator]);
+      }
 
 
     })
-
-    // // get all approvals
-    // this.approvalSrv.getAll().subscribe(
-    //   res => {
-    //     console.info(res);
-    //     this.transferListSource = res.map(obj => {
-    //       return {
-    //         id: obj.id,
-    //         title: obj.approval_no,
-    //         direction: 'left'
-    //       }
-    //     })
-    //   }
-    // );
-
-    // // load category info
-    // this.cateSrv.getAll().subscribe(
-    //   res => {
-    //     this.listOfCategory = res.map(res => {
-    //       return {
-    //         value: res.id.toString(),
-    //         label: res.name,
-    //       }
-    //     });
-    //     console.info(this.listOfCategory);
-    //     if (this.record.id > 0)
-    //       this.prodSrv.getProduct(`${this.record.id}`).subscribe(res => {
-    //         console.info(res);
-    //         this.i = res;
-    //         // this.categoryId = res.type;
-    //         this.productForm.patchValue(res);
-    //         this.fileList = res.attachment;
-    //         //this.productForm.setValue(res);
-    //         // this.nestedForm.patchValue(res.data);
-    //         console.info(this.productForm);
-    //       });
-    //   }
-    // );
-    // const children: Array<{ label: string; value: string }> = [];
-    // for (let i = 10; i < 36; i++) {
-    //   children.push({ label: i.toString(36) + i, value: i.toString(36) + i });
-    // }
-    // this.listOfCategory = children;
-
-
-
 
   }
 
@@ -246,7 +217,11 @@ export class ProductsProductsEditComponent implements OnInit {
           if (key === 'data') {
             formData.append(key, JSON.stringify(prodFormValue[key]));
           } else {
-            formData.append(key, prodFormValue[key]);
+            if (Array.isArray(prodFormValue[key])) {
+              formData.append(key, JSON.stringify(prodFormValue[key]));
+            } else {
+              formData.append(key, prodFormValue[key]);
+            }
           }
         } else {
           formData.append(key, '');

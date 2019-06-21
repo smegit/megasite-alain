@@ -38,6 +38,10 @@ const routes: Routes = [
         path: 'approval',
         loadChildren: './approval/approval.module#ApprovalModule'
       },
+      {
+        path: 'feature',
+        loadChildren: './feature/feature.module#FeatureModule'
+      },
       // 业务子模块
       // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
     ]

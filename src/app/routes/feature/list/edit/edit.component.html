@@ -1,0 +1,72 @@
+<div class="modal-header">
+  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Feature - {{record.name}}</div>
+  <ng-template #addNew>
+    <div class="modal-title">Add Feature</div>
+  </ng-template>
+</div>
+<!-- <nz-spin *ngIf="!i" class="modal-spin"></nz-spin> -->
+<!-- <sf *ngIf="i" #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+    <button nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid" [nzLoading]="http.loading">保存</button>
+  </div>
+</sf> -->
+
+<form nz-form [formGroup]="featureForm">
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="name">Name
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="name" id="name" placeholder="Please input feature name" />
+      <nz-form-explain
+        *ngIf="featureForm.get('name')?.dirty && featureForm.get('name')?.errors || featureForm.get('name')?.pending">
+        <ng-container *ngIf="featureForm.get('name')?.hasError('required')">
+          Feature name is required!
+        </ng-container>
+        <ng-container *ngIf="featureForm.get('name')?.hasError('duplicated')">
+          {{ featureForm.get('name').value }} already exists!
+        </ng-container>
+        <ng-container *ngIf="featureForm.get('name')?.hasError('pending')">
+          Validating...
+        </ng-container>
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="short_description">Short Description
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <textarea nz-input rows="2" placeholder="write any thing" formControlName="short_description"
+        id="short_description"></textarea>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="long_description">Long Description
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <textarea nz-input rows="4" placeholder="write any thing" formControlName="long_description"
+        id="long_description"></textarea>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="feature_type">Feature Type
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <nz-select formControlName="feature_type">
+        <nz-option *ngFor="let option of featureTypeOptions" [nzLabel]="option.label" [nzValue]="option.value">
+        </nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">Close</button>
+    <button nz-button type="submit" nzType="primary" (click)="submitForm()">Save</button>
+  </div>
+
+
+</form>

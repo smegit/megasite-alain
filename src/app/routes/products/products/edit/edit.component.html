@@ -79,6 +79,15 @@
     </nz-form-item>
   </form>
 
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="feature">Features
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <nz-select formControlName="feature" [nzMode]="'tags'">
+        <nz-option *ngFor="let option of featureOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Approvals

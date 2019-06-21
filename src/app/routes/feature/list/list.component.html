@@ -1,0 +1,24 @@
+<page-header [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button (click)="add()" nz-button nzType="primary">Add</button>
+  </ng-template>
+</page-header>
+<nz-card>
+  <!-- <sf #sf mode="search" [formData]="q" [schema]="searchSchema" (formSubmit)="st.reset($event)"
+    (formReset)="st.reset($event)"></sf> -->
+  <form nz-form [nzLayout]="'inline'" [formGroup]="searchForm" (ngSubmit)="submitForm()">
+    <nz-form-item>
+      <nz-form-control>
+        <input formControlName="name" nz-input placeholder="Search features" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary">Search</button>
+        <button nz-button nzType="primary">Reset</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <st #st [data]="data" [loading]="loading" [page]="page" [total]="total" [columns]="columns"
+    (change)="stChange($event)"></st>
+</nz-card>

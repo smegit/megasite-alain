@@ -90,6 +90,9 @@ export class CategoryListEditComponent implements OnInit {
               })
             }
           );
+        } else {
+          // for newly created category, should validate category first 
+          this.categoryForm.get('name').setAsyncValidators([this.cateNameAsyncValidator]);
         }
       }
     );

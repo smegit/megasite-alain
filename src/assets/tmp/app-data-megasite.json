@@ -41,6 +41,7 @@
         },
         {
           "text": "Features",
+          "link": "/feature",
           "i18n": "menu.features",
           "icon": "anticon anticon-rocket"
         },
