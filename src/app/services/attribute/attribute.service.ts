@@ -42,5 +42,9 @@ export class AttributeService {
   showAttribute(id): Observable<any> {
     return this._httpClient.get(`${this.attributeUrl}/${id}`);
   }
+  // async validate attribute name
+  checkName(name): Observable<any> {
+    return this._httpClient.get(`${this.attributeUrl}/check/${name}`);
+  }
 
 }

@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzModalRef, NzMessageService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { SFSchema, SFUISchema } from '@delon/form';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { AttributeService } from '../../../../services/attribute/attribute.service';
+import { Observable, observable, Observer } from 'rxjs';
 
 @Component({
   selector: 'app-category-attribute-edit',
@@ -69,12 +70,15 @@ export class CategoryAttributeEditComponent implements OnInit {
     // );
 
     // get details
-    if (this.record.id > 0)
+    if (this.record.id > 0) {
       this.attributeSrv.showAttribute(this.record.id).subscribe(
         (res) => {
           this.attributeForm.patchValue(res);
         }
       );
+    } else {
+      this.attributeForm.get('name').setAsyncValidators([this.attrNameAsyncValidator]);
+    }
   }
 
   // submit form
@@ -139,8 +143,21 @@ export class CategoryAttributeEditComponent implements OnInit {
     if (!control.value) {
       return { required: true };
     } else if (!/^[a-z]+(?:_+[a-z]+)*$/.test(control.value)) {
-      return { name: true, error: true };
+      return { name: true, error: true, wrongFormat: true };
     }
     return {};
   }
+
+  attrNameAsyncValidator = (control: FormControl) =>
+    new Observable((observer: Observer<ValidationErrors | null>) => {
+      this.attributeSrv.checkName(control.value).subscribe(res => {
+        console.info(res);
+        if (res.success) {
+          observer.next(null);
+        } else {
+          observer.next({ error: true, duplicated: true });
+        }
+        observer.complete();
+      });
+    })
 }

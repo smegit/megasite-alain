@@ -20,8 +20,20 @@
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <input nz-input formControlName="name" id="name"
         placeholder="only allow lowercase and underscore, eg. 'function_list'" />
-      <nz-form-explain *ngIf="attributeForm.get('name')?.dirty && attributeForm.get('name')?.errors">
-        Only allow lowercase and underscore.
+      <nz-form-explain
+        *ngIf="attributeForm.get('name')?.dirty && attributeForm.get('name')?.errors || attributeForm.get('name')?.pending">
+        <ng-container *ngIf="attributeForm.get('name')?.hasError('required')">
+          Please input attribute name!
+        </ng-container>
+        <ng-container *ngIf="attributeForm.get('name')?.hasError('wrongFormat')">
+          Only allow lowercase and underscore.
+        </ng-container>
+        <ng-container *ngIf="attributeForm.get('name')?.hasError('duplicated')">
+          {{attributeForm.get('name').value}} already exist!
+        </ng-container>
+        <ng-container *ngIf="attributeForm.get('name')?.pending">
+          Validating...
+        </ng-container>
       </nz-form-explain>
     </nz-form-control>
   </nz-form-item>

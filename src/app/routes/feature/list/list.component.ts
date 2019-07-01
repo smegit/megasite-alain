@@ -133,4 +133,14 @@ export class FeatureListComponent implements OnInit {
     this.modal.createStatic(FeatureListEditComponent, { record, category: this.categoryList })
       .subscribe(() => this.st.reload());
   }
+  // submitForm() {
+  //   console.info(this.searchForm.value);
+
+  // }
+
+  reset() {
+    console.info('reset called');
+    this.q = {};
+    this.getData();
+  }
 }

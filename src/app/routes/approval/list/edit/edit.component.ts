@@ -8,6 +8,7 @@ import { environment } from '../../../../../environments/environment';
 import { of, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ProductService } from 'app/services/product/product.service';
 
 @Component({
   selector: 'app-approval-list-edit',
@@ -17,8 +18,12 @@ export class ApprovalListEditComponent implements OnInit {
   record: any = {};
   i: any;
   fileList: UploadFile[] = [];
+  loading = true;
   uploading = false;
   approvalForm: FormGroup;
+  transferListSource: any[] = [];
+  prodList: any[] = [];
+
   // {
   //   name: "demo中文.pdf",
   //   size: 46673,
@@ -257,7 +262,8 @@ export class ApprovalListEditComponent implements OnInit {
     private msgSrv: NzMessageService,
     public http: _HttpClient,
     private approvalSrv: ApprovalService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private prodSrv: ProductService
   ) { }
 
   ngOnInit(): void {
@@ -277,15 +283,40 @@ export class ApprovalListEditComponent implements OnInit {
       description: [null],
       notes: [null],
     });
-    if (this.record.id > 0) {
-      this.approvalSrv.showApproval(this.record.id).subscribe(
-        res => {
-          //this.i = res;
-          this.fileList = res.attachment;
-          this.approvalForm.patchValue(res);
+
+    this.prodSrv.getAll().subscribe(
+      res => {
+        this.transferListSource = res.map(obj => {
+          return {
+            id: obj.id,
+            title: obj.model_number,
+            direction: 'left'
+          };
+        });
+
+        if (this.record.id > 0) {
+          this.approvalSrv.showApproval(this.record.id).subscribe(
+            res => {
+              //this.i = res;
+              this.prodList = res.product.map(obj => obj.id);
+              this.fileList = res.attachment;
+              this.approvalForm.patchValue(res);
+
+              this.transferListSource = this.transferListSource.map(obj => {
+                return {
+                  id: obj.id,
+                  title: obj.title,
+                  direction: this.prodList.includes(obj.id) ? 'right' : 'left',
+                }
+              });
+              this.loading = false;
+            }
+          )
         }
-      )
-    }
+
+
+      });
+
 
   }
 
@@ -345,6 +376,8 @@ export class ApprovalListEditComponent implements OnInit {
         this.approvalForm.controls[i].updateValueAndValidity();
       }
       console.log(this.approvalForm.value);
+      // append product list
+      formData.append('prodList', JSON.stringify(this.prodList));
       if (this.record.id > 0) {
         this.approvalSrv.updateApproval(this.record.id, formData).subscribe(
           res => {
@@ -380,7 +413,22 @@ export class ApprovalListEditComponent implements OnInit {
 
   }
 
-
+  change(evt) {
+    console.info('change called');
+    console.info(evt);
+    if (Array.isArray(evt['list'])) {
+      if (evt['from'] === 'left' && evt['to'] === 'right') {
+        evt['list'].forEach(e => {
+          this.prodList.push(e.id);
+        });
+      } else if (evt['from'] === 'right' && evt['to'] === 'left') {
+        evt['list'].forEach(e => {
+          this.prodList = this.prodList.filter(attr => attr !== e.id);
+        });
+      }
+    }
+    console.info(this.prodList);
+  }
   close() {
     this.modal.destroy();
   }

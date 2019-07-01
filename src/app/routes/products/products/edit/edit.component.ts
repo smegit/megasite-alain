@@ -13,6 +13,7 @@ import { FeatureService } from 'app/services/feature/feature.service';
 @Component({
   selector: 'app-products-products-edit',
   templateUrl: './edit.component.html',
+  styleUrls: ['./edit.component.less'],
 })
 export class ProductsProductsEditComponent implements OnInit {
   record: any = {};

@@ -6,16 +6,16 @@
 <nz-card>
   <!-- <sf #sf mode="search" [formData]="q" [schema]="searchSchema" (formSubmit)="st.reset($event)"
     (formReset)="st.reset($event)"></sf> -->
-  <form nz-form [nzLayout]="'inline'" [formGroup]="searchForm" (ngSubmit)="submitForm()">
+  <form nz-form [nzLayout]="'inline'" [formGroup]="searchForm" (ngSubmit)="getData()">
     <nz-form-item>
       <nz-form-control>
-        <input formControlName="name" nz-input placeholder="Search features" />
+        <input formControlName="name" nz-input [(ngModel)]="q.name" name="name" placeholder="Search features" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-control>
-        <button nz-button nzType="primary">Search</button>
-        <button nz-button nzType="primary">Reset</button>
+        <button nz-button type="submit" nzType="primary">Search</button>
+        <button nz-button type="reset" (click)="reset()">Reset</button>
       </nz-form-control>
     </nz-form-item>
   </form>

@@ -1,0 +1,71 @@
+<div class="modal-header">
+  <div class="modal-title">View {{ record.model_number }} </div>
+</div>
+<nz-spin *ngIf="!data" class="modal-spin"></nz-spin>
+<div sv-container *ngIf="data" col=1 labelWidth="150">
+
+  <nz-tabset [nzSize]="'small'">
+    <nz-tab nzTitle="Base">
+      <sv label="Model">{{ data.model_number }}</sv>
+      <sv label="Description">{{ data.description}}</sv>
+      <sv label="Category">{{ data.category?.name }}</sv>
+      <sv label="Features">
+        <nz-list [nzDataSource]="data.feature" nzBordered nzSize="small" [nzRenderItem]="featureItem">
+          <ng-template #featureItem let-item>
+            <nz-list-item [nzContent]="item.name"></nz-list-item>
+          </ng-template>
+        </nz-list>
+      </sv>
+      <sv label="Approval">
+        <nz-list [nzDataSource]="data.approval" nzBordered nzSize="small" [nzRenderItem]="item">
+          <ng-template #item let-item>
+            <nz-list-item [nzContent]="item.approval_no"></nz-list-item>
+          </ng-template>
+        </nz-list>
+      </sv>
+      <sv label="Attachment">
+        <nz-carousel [nzEffect]="'scrollx'" [nzAutoPlay]="true" style="max-width: 400px">
+          <div nz-carousel-content *ngFor="let index of data.attachment">
+            <!-- <h3>{{ index?.name }}</h3> -->
+            <img [src]="index.url" (click)="onClickImg(index.url)">
+          </div>
+        </nz-carousel>
+      </sv>
+    </nz-tab>
+    <nz-tab nzTitle="Custom Attributes">
+      <sv *ngFor="let item of customAttributes; let i = index" [label]="item.label">
+
+        <!-- {{data.data[item.name]}} -->
+        <!-- List Entry -->
+        <ul *ngIf="item.ui_type == 'Multi Selection' && item.name !='function_list'">
+          <li *ngFor="let item of data.data[item.name]">
+            {{item}}
+          </li>
+        </ul>
+
+        <!-- <nz-list *ngIf="item.ui_type == 'Multi Selection' && item.name =='function_list'"
+          [nzDataSource]="data.data[item.name]" nzBordered nzSize="small" [nzRenderItem]="featureItem">
+          <ng-template #featureItem let-item>
+            <nz-list-item [nzContent]="item"></nz-list-item>
+          </ng-template>
+        </nz-list> -->
+        <ul *ngIf="item.ui_type == 'Multi Selection' && item.name =='function_list'" style="column-count: 2">
+          <li *ngFor="let item of data.data[item.name]">
+            <img [src]="'/assets/tmp/images/products/function_icons/' + item  + '.jpg'" style="height: 40px;">
+            {{item}}
+          </li>
+        </ul>
+
+        <span *ngIf="item.ui_type == 'Input'">
+          {{data.data[item.name]}}
+        </span>
+      </sv>
+
+    </nz-tab>
+  </nz-tabset>
+</div>
+<div class="modal-footer">
+  <button nz-button type="button" (click)="close()">Close</button>
+  <button nz-button type="button" nzType="primary" (click)="openEditModal()">Edit</button>
+
+</div>

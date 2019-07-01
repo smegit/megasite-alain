@@ -61,4 +61,8 @@ export class ProductService {
   checkModel(model): Observable<any> {
     return this._httpClient.get(`${this.productsUrl}/check/${model}`);
   }
+  // Get all products' id and model_number
+  getAll(): Observable<any> {
+    return this._httpClient.get(`${this.productsUrl}/all`);
+  }
 }

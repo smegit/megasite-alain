@@ -6,6 +6,7 @@ import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ProductService } from '../../../services/product/product.service';
 import { ProductsProductsEditComponent } from './edit/edit.component';
 import { CategoryService } from 'app/services/category/category.service';
+import { ProductsProductsViewComponent } from './view/view.component';
 
 
 @Component({
@@ -62,6 +63,10 @@ export class ProductsComponent implements OnInit {
     {
       title: 'Action',
       buttons: [
+        {
+          text: 'View',
+          click: (record: any) => this.openView(record),
+        },
         {
           text: 'Edit',
           click: (record: any) => this.openEdit(record),
@@ -178,6 +183,19 @@ export class ProductsComponent implements OnInit {
       res => {
         console.info(res);
         this.st.reload();
+      }
+    )
+  }
+  // Open view modal
+  openView(record) {
+    console.info('openView called');
+    console.info(record);
+    this.modal.createStatic(ProductsProductsViewComponent, { record }, { size: 'md' }).subscribe(
+      res => {
+        console.info(res);
+        if (res.msg == 'openEditModal') {
+          this.openEdit(record);
+        }
       }
     )
   }

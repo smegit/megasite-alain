@@ -13,7 +13,8 @@
   </div>
 </sf> -->
 
-<form nz-form [formGroup]="approvalForm" [nzLayout]="'horizontal'">
+<nz-spin *ngIf="loading" class="modal-spin"></nz-spin>
+<form *ngIf="!loading" nz-form [formGroup]="approvalForm" [nzLayout]="'horizontal'">
   <nz-row [nzGutter]="{ xs: 8, sm:8, md: 8, lg: 24, xl: 48, xxl: 48 }">
     <nz-col [nzMd]="12" [nzSm]="24">
       <nz-form-item>
@@ -34,7 +35,8 @@
         </nz-form-label>
         <nz-form-control [nzMd]="16" [nzSm]="24">
           <input nz-input formControlName="approval_type" id="approval_type" />
-          <nz-form-explain *ngIf="approvalForm.get('approval_type')?.dirty && approvalForm.get('approval_type')?.errors">
+          <nz-form-explain
+            *ngIf="approvalForm.get('approval_type')?.dirty && approvalForm.get('approval_type')?.errors">
             The input is invalid.
           </nz-form-explain>
         </nz-form-control>
@@ -148,6 +150,19 @@
         </nz-form-control>
       </nz-form-item>
     </nz-col>
+
+    <nz-col [nzMd]="24" [nzSm]="24">
+      <nz-form-item>
+        <nz-form-label [nzMd]="4" [nzSm]="24" nzFor="doc">Products
+        </nz-form-label>
+        <nz-form-control [nzMd]="20" [nzSm]="24">
+          <nz-transfer [nzDataSource]="transferListSource" [nzTitles]="['Source', 'Target']" nzShowSearch
+            (nzChange)="change($event)">
+          </nz-transfer>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-col>
+
 
     <nz-col [nzMd]="24" [nzSm]="24">
       <nz-form-item>

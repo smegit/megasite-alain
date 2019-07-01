@@ -4,10 +4,12 @@ import { ProductsRoutingModule } from './products-routing.module';
 
 import { ProductsComponent } from './products/products.component';
 import { ProductsProductsEditComponent } from './products/edit/edit.component';
+import { ProductsProductsViewComponent } from './products/view/view.component';
 
 const COMPONENTS = [ProductsComponent];
 const COMPONENTS_NOROUNT = [
-  ProductsProductsEditComponent];
+  ProductsProductsEditComponent,
+  ProductsProductsViewComponent];
 
 @NgModule({
   imports: [
