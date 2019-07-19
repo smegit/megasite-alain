@@ -60,18 +60,18 @@ export class FunctionListEditComponent implements OnInit {
       product_type: [null],
       function_code: [null, [Validators.required, this.funCodeValidator]],
       description: [null, [Validators.required]],
-      url: [null]
+      url: [{ value: '', disabled: true }]
     });
 
     // Get all categories / product type 
-    // this.cateSrv.getAll().subscribe(res => {
-    //   this.listOfProductType = res.map(cate => {
-    //     return {
-    //       value: cate.id,
-    //       label: cate.name,
-    //     }
-    //   });
-    // });
+    this.cateSrv.getAll().subscribe(res => {
+      this.listOfProductType = res.map(cate => {
+        return {
+          value: cate.id,
+          label: cate.name,
+        }
+      });
+    });
 
     // auto-complete 'description' field
     this.funForm.get('function_code').valueChanges.subscribe(
@@ -84,7 +84,7 @@ export class FunctionListEditComponent implements OnInit {
         const label = splitStr.join(' ');
         this.funForm.get('description').setValue(label);
       }
-    )
+    );
     if (this.record.id > 0) {
       this.funSrv.showFun(this.record.id).subscribe(res => {
         this.funForm.patchValue(res);

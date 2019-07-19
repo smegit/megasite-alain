@@ -35,16 +35,16 @@
     </nz-form-control>
   </nz-form-item>
 
-  <!-- <nz-form-item>
+  <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="product_type">Product Type
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
-      <nz-select nzPlaceHolder="optional" formControlName="product_type">
-        <nz-option *ngFor="let option of listOfProductType" [nzLabel]="option.label" [nzValue]="option.value">
+      <nz-select nzPlaceHolder="optional" formControlName="product_type" nzShowSearch>
+        <nz-option *ngFor="let option of listOfProductType" [nzLabel]="option.label" [nzValue]="option.label">
         </nz-option>
       </nz-select>
     </nz-form-control>
-  </nz-form-item> -->
+  </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">Description
@@ -75,7 +75,7 @@
     </nz-form-label>
     <nz-form-control [nzMd]="12" [nzSm]="24">
       <img *ngIf="funForm.get('url')?.value != null" [src]="funForm.get('url')?.value" class="icon-img" />
-      <nz-upload [nzBeforeUpload]="beforeUpload" [nzRemove]="remove" [(nzFileList)]="fileList">
+      <nz-upload [nzBeforeUpload]="beforeUpload" [(nzFileList)]="fileList">
         <button nz-button>
           <span><i nz-icon nzType="upload"></i> Upload</span>
         </button>

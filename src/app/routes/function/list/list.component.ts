@@ -36,7 +36,7 @@ export class FunctionListComponent implements OnInit {
     { title: 'Product Type', index: 'product_type' },
     { title: 'Function Code', index: 'function_code' },
     { title: 'Description', index: 'description' },
-    { title: 'Icon', type: 'img', width: '50px', index: 'url' },
+    { title: 'Icon', type: 'img', width: '50px', index: 'url', click: (record) => console.info('icon clicked') },
     {
       title: '',
       buttons: [
@@ -85,6 +85,8 @@ export class FunctionListComponent implements OnInit {
       case 'ps':
         this.getData(limit, offset);
         break;
+      case 'click':
+        this.clickEventHandle(e);
     }
   }
   add() {
@@ -99,6 +101,19 @@ export class FunctionListComponent implements OnInit {
   }
   openView(record) {
 
+  }
+  clickIcon(record, instance) {
+    console.info('clickIcon called');
+    console.info(record);
+    console.info(instance);
+  }
+  clickEventHandle(event) {
+    console.info('clickEventHandle called');
+    console.info(event.click.e);
+    // display icon in modal
+    if (event.click.e.toElement == 'img.img') {
+      console.info('should display icon modal')
+    }
   }
 
 }
