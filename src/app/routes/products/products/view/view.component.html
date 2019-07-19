@@ -2,10 +2,15 @@
   <div class="modal-title">View {{ record.model_number }} </div>
 </div>
 <nz-spin *ngIf="!data" class="modal-spin"></nz-spin>
-<div sv-container *ngIf="data" col=1 labelWidth="150">
+<div sv-container *ngIf="data" col=1 labelWidth="150" style="min-height: 550px">
 
   <nz-tabset [nzSize]="'small'">
     <nz-tab nzTitle="Base">
+      <sv label="Cover Image">
+        <img [src]="coverImageUrls[0]"
+          onerror="this.src='https://wolper.com.au/wp-content/uploads/2017/10/image-placeholder.jpg'"
+          (click)="onClickImg(coverImageUrls[0])" style="max-width: 100px;margin-right: 10px;">
+      </sv>
       <sv label="Model">{{ data.model_number }}</sv>
       <sv label="Description">{{ data.description}}</sv>
       <sv label="Category">{{ data.category?.name }}</sv>
@@ -16,6 +21,16 @@
           </ng-template>
         </nz-list>
       </sv>
+
+      <!-- <sv label="Attachment">
+        <nz-carousel [nzEffect]="'scrollx'" [nzAutoPlay]="true" style="max-width: 400px">
+          <div nz-carousel-content *ngFor="let index of data.attachment">
+            <img [src]="index.url" (click)="onClickImg(index.url)">
+          </div>
+        </nz-carousel>
+      </sv> -->
+    </nz-tab>
+    <nz-tab nzTitle="Approval">
       <sv label="Approval">
         <nz-list [nzDataSource]="data.approval" nzBordered nzSize="small" [nzRenderItem]="item">
           <ng-template #item let-item>
@@ -23,16 +38,9 @@
           </ng-template>
         </nz-list>
       </sv>
-      <sv label="Attachment">
-        <nz-carousel [nzEffect]="'scrollx'" [nzAutoPlay]="true" style="max-width: 400px">
-          <div nz-carousel-content *ngFor="let index of data.attachment">
-            <!-- <h3>{{ index?.name }}</h3> -->
-            <img [src]="index.url" (click)="onClickImg(index.url)">
-          </div>
-        </nz-carousel>
-      </sv>
     </nz-tab>
     <nz-tab nzTitle="Custom Attributes">
+      <nz-empty *ngIf="!customAttributes.length > 0" [nzNotFoundContent]="customEmptyTpl"></nz-empty>
       <sv *ngFor="let item of customAttributes; let i = index" [label]="item.label">
 
         <!-- {{data.data[item.name]}} -->
@@ -60,7 +68,40 @@
           {{data.data[item.name]}}
         </span>
       </sv>
+      <ng-template #customEmptyTpl>
+        <div style="text-align: center;">
+          <p>The category has not been given any custom attributes.</p>
+        </div>
+      </ng-template>
 
+    </nz-tab>
+    <nz-tab nzTitle="Attachment">
+      <!-- <sv label="Attachment">
+        <nz-carousel [nzEffect]="'scrollx'" [nzAutoPlay]="true" style="max-width: 400px">
+          <div nz-carousel-content *ngFor="let index of data.attachment">
+            <img [src]="index.url" (click)="onClickImg(index.url)">
+          </div>
+        </nz-carousel>
+      </sv> -->
+      <nz-list [nzDataSource]="attachmentTypes" [nzRenderItem]="typeItem" style="margin: 10px">
+        <ng-template #typeItem let-item>
+          <p>{{item}}</p>
+          <nz-list [nzDataSource]="data.attachment" [nzRenderItem]="attachment">
+            <ng-template #attachment let-attachment>
+              <img *ngIf="attachment.type === item" [src]="attachment.url"
+                onerror="this.src='https://wolper.com.au/wp-content/uploads/2017/10/image-placeholder.jpg'"
+                (click)="onClickImg(attachment.url)" style="max-width: 100px;margin-right: 10px;">
+            </ng-template>
+          </nz-list>
+          <!-- <nz-list-item [nzContent]="nzContent">
+            <ng-template #nzContent> -->
+          <!-- <p>{{item}}</p> -->
+          <!-- <p>{{item.name}}</p>
+              <img [src]="item.url"> -->
+          <!-- </ng-template>
+          </nz-list-item> -->
+        </ng-template>
+      </nz-list>
     </nz-tab>
   </nz-tabset>
 </div>

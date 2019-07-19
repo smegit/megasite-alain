@@ -16,10 +16,11 @@ export class AttributeService {
   ) { }
 
   // get attributes by limit and offset
-  getAttributes(limit: string, offset: string): Observable<any> {
+  getAttributes(limit: string, offset: string, query: any): Observable<any> {
     const options = {
       limit: limit,
-      offset: offset
+      offset: offset,
+      query: query
     };
     return this._httpClient.get(`${this.attributeUrl}`, options);
   }

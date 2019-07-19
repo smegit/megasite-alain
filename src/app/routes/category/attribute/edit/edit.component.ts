@@ -88,11 +88,11 @@ export class CategoryAttributeEditComponent implements OnInit {
 
 
     // Validate form value
-    for (const i in this.attributeForm.controls) {
-      this.attributeForm.controls[i].markAsDirty();
-      this.attributeForm.controls[i].updateValueAndValidity();
-    }
-
+    // for (const i in this.attributeForm.controls) {
+    //   this.attributeForm.controls[i].markAsDirty();
+    //   this.attributeForm.controls[i].updateValueAndValidity();
+    // }
+    console.info(this.attributeForm.valid);
     if (this.attributeForm.valid) {
       if (this.record.id > 0) { // update attribute
         this.attributeSrv.updateAttribute(this.record.id, attributeFormValue).subscribe(

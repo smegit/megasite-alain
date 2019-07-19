@@ -13,6 +13,7 @@ export class CategoryAttributeComponent implements OnInit {
   loading = true;
   total: Number = 0;
   data: any[] = [];
+  q = { name: '' };
   searchSchema: SFSchema = {
     properties: {
       no: {
@@ -57,8 +58,9 @@ export class CategoryAttributeComponent implements OnInit {
   getData(limit?: string, offset?: string) {
     const l = limit ? limit : '10';
     const o = offset ? offset : '0';
+    const query = JSON.stringify(this.q);
     this.loading = true;
-    this.attributeSrc.getAttributes(l, o).subscribe(res => {
+    this.attributeSrc.getAttributes(l, o, query).subscribe(res => {
       this.data = res.rows;
       this.total = res.count;
       this.loading = false;
@@ -99,6 +101,10 @@ export class CategoryAttributeComponent implements OnInit {
   openEdit(record) {
     this.modal.createStatic(CategoryAttributeEditComponent, { record }, { size: 'md' })
       .subscribe(() => this.st.reload());
+  }
+  reset() {
+    this.q = { name: '' };
+    this.getData();
   }
 
 }

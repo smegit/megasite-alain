@@ -2,24 +2,24 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent, STChange, STPage } from '@delon/abc';
 import { SFSchema } from '@delon/form';
-import { CategoryListEditComponent } from './edit/edit.component';
-import { CategoryService } from '../../../services/category/category.service';
+import { FunService } from '../../../services/fun/fun.service';
+import { FunctionListEditComponent } from './edit/edit.component';
 
 @Component({
-  selector: 'app-category-list',
+  selector: 'app-function-list',
   templateUrl: './list.component.html',
 })
-export class CategoryListComponent implements OnInit {
+export class FunctionListComponent implements OnInit {
+  url = `/user`;
   loading = true;
   total: Number = 0;
-  data: any[] = [];
   q: any = {};
-
+  data: any[] = [];
   searchSchema: SFSchema = {
     properties: {
       no: {
         type: 'string',
-        title: 'Id'
+        title: '编号'
       }
     }
   };
@@ -33,14 +33,15 @@ export class CategoryListComponent implements OnInit {
   };
   columns: STColumn[] = [
     { title: 'Id', index: 'id' },
-    { title: 'Name', index: 'name' },
+    { title: 'Product Type', index: 'product_type' },
+    { title: 'Function Code', index: 'function_code' },
     { title: 'Description', index: 'description' },
-    { title: 'Parent', index: 'parent_id' },
+    { title: 'Icon', type: 'img', width: '50px', index: 'url' },
     {
       title: '',
       buttons: [
-        { text: 'View', click: (record: any) => { this.openView(record) } },
-        { text: 'Edit', click: (record: any) => { this.openEdit(record) } },
+        { text: 'View', click: (item: any) => this.openView(item) },
+        { text: 'Edit', click: (item: any) => this.openEdit(item) },
       ]
     }
   ];
@@ -48,7 +49,7 @@ export class CategoryListComponent implements OnInit {
   constructor(
     private http: _HttpClient,
     private modal: ModalHelper,
-    private cateSrv: CategoryService
+    private funSrv: FunService
   ) { }
 
   ngOnInit() {
@@ -56,10 +57,11 @@ export class CategoryListComponent implements OnInit {
   }
 
   getData(limit?: string, offset?: string) {
+    console.info('getData called');
     const l = limit ? limit : '10';
     const o = offset ? offset : '0';
     const query = JSON.stringify(this.q);
-    this.cateSrv.getCategories(l, o, query).subscribe(
+    this.funSrv.getFuns(l, o, query).subscribe(
       res => {
         this.data = res.rows;
         this.total = res.count;
@@ -70,11 +72,6 @@ export class CategoryListComponent implements OnInit {
     );
   }
 
-  reset() {
-    console.info('reset called');
-    this.q = {};
-    this.getData();
-  }
   // listener for table event
   stChange(e: STChange) {
     console.info('stChange called');
@@ -90,27 +87,18 @@ export class CategoryListComponent implements OnInit {
         break;
     }
   }
-
   add() {
-    console.info('add called');
     this.modal
-      .createStatic(CategoryListEditComponent, { i: { id: 0 } }, { size: 'md' })
-      .subscribe((res) => {
-        console.info(res);
-        this.st.reload();
-      });
-  }
-  openView(item) {
-
+      .createStatic(FunctionListEditComponent, { i: { id: 0 } }, { size: 'md' })
+      .subscribe(() => this.st.reload());
   }
   openEdit(record) {
-    console.info('openEdit called');
-    console.info(record);
-    this.modal.createStatic(CategoryListEditComponent, { record }, { size: 'md' })
-      .subscribe((res) => {
-        console.info(res);
-        this.st.reload();
-      });
+    this.modal
+      .createStatic(FunctionListEditComponent, { record }, { size: 'md' })
+      .subscribe(() => this.st.reload());
+  }
+  openView(record) {
+
   }
 
 }

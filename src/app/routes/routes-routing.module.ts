@@ -42,6 +42,10 @@ const routes: Routes = [
         path: 'feature',
         loadChildren: './feature/feature.module#FeatureModule'
       },
+      {
+        path: 'function',
+        loadChildren: './function/function.module#FunctionModule'
+      },
       // 业务子模块
       // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
     ]

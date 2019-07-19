@@ -14,7 +14,7 @@
 </sf> -->
 
 <form nz-form [formGroup]="productForm">
-  <nz-tabset [nzSize]="'small'" class="tabs">
+  <nz-tabset [nzSize]="'small'" class="tabs" style="min-height: 550px">
     <nz-tab nzTitle="Base">
       <nz-form-item>
         <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="model_number">Model
@@ -27,7 +27,7 @@
               Please enter model number!
             </ng-container>
             <ng-container *ngIf="productForm.get('model_number')?.hasError('duplicated')">
-              The model already exist!
+              {{ productForm.get('model_number').value}} already exist!
             </ng-container>
             <ng-container *ngIf="productForm.get('model_number')?.pending">
               Validating...
@@ -55,8 +55,10 @@
             <nz-option *ngFor="let option of listOfCategory" [nzLabel]="option.label" [nzValue]="option.value">
             </nz-option>
           </nz-select>
-          <nz-form-explain *ngIf="productForm.get('type')?.dirty && productForm.get('type')?.errors">
-            The input is invalid.
+          <nz-form-explain>
+            <ng-container *ngIf="productForm.get('type')?.hasError('required')">
+              Please select a category !
+            </ng-container>
           </nz-form-explain>
         </nz-form-control>
       </nz-form-item>
@@ -73,6 +75,19 @@
         </nz-form-control>
       </nz-form-item>
 
+      <!-- <nz-form-item>
+        <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Approvals
+        </nz-form-label>
+        <nz-form-control [nzMd]="18" [nzSm]="24">
+          <nz-transfer [nzDataSource]="transferListSource" [nzTitles]="['Source', 'Target']" nzShowSearch
+            (nzChange)="change($event)">
+          </nz-transfer>
+        </nz-form-control>
+      </nz-form-item> -->
+
+    </nz-tab>
+
+    <nz-tab nzTitle="Approval">
       <nz-form-item>
         <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Approvals
         </nz-form-label>
@@ -82,7 +97,32 @@
           </nz-transfer>
         </nz-form-control>
       </nz-form-item>
+    </nz-tab>
 
+    <nz-tab nzTitle="Custom Attributes">
+      <nz-empty *ngIf="!(controlArray.length > 0)" [nzNotFoundContent]="customEmptyTpl"></nz-empty>
+      <form nz-form [formGroup]="nestedForm">
+        <nz-form-item *ngFor="let control of controlArray; let i = index">
+          <nz-form-label [nzMd]="6" [nzSm]="24" [nzFor]="control.controlInstance">{{control.controlLabel}}
+          </nz-form-label>
+          <nz-form-control [nzMd]="16" [nzSm]="24">
+            <input *ngIf="control.uiType == 'Input'" nz-input [formControlName]="control.controlInstance">
+
+            <nz-select *ngIf="control.uiType == 'Single Selection'" [formControlName]="control.controlInstance">
+              <nz-option *ngFor="let option of control.options" [nzLabel]="option" [nzValue]="option"></nz-option>
+            </nz-select>
+
+            <nz-select *ngIf="control.uiType == 'Multi Selection'" [formControlName]="control.controlInstance"
+              [nzMode]="'tags'">
+              <nz-option *ngFor="let option of control.options" [nzLabel]="option" [nzValue]="option"></nz-option>
+            </nz-select>
+
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-tab>
+
+    <nz-tab nzTitle="Attachment">
       <nz-form-item>
         <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Attachment
         </nz-form-label>
@@ -92,9 +132,9 @@
           </nz-upload>
           <!-- <textarea formControlName="notes" nz-input rows="2" placeholder="write any thing"></textarea> -->
           <!-- <input nz-input formControlName="description" id="description" />
-          <nz-form-explain *ngIf="approvalForm.get('standard')?.dirty && approvalForm.get('standard')?.errors">
-            The input is invalid.
-          </nz-form-explain> -->
+                <nz-form-explain *ngIf="approvalForm.get('standard')?.dirty && approvalForm.get('standard')?.errors">
+                  The input is invalid.
+                </nz-form-explain> -->
         </nz-form-control>
       </nz-form-item>
 
@@ -133,7 +173,7 @@
                 </nz-select>
 
                 <!-- <input type="text" nz-input [nzSize]="'small'" [(ngModel)]="data.description"
-              [ngModelOptions]="{standalone: true}" /> -->
+                    [ngModelOptions]="{standalone: true}" /> -->
               </ng-template>
             </td>
 
@@ -156,30 +196,12 @@
       </nz-table>
     </nz-tab>
 
-
-    <nz-tab nzTitle="Custom Attributes">
-      <form nz-form [formGroup]="nestedForm">
-        <nz-form-item *ngFor="let control of controlArray; let i = index">
-          <nz-form-label [nzMd]="6" [nzSm]="24" [nzFor]="control.controlInstance">{{control.controlLabel}}
-          </nz-form-label>
-          <nz-form-control [nzMd]="16" [nzSm]="24">
-            <input *ngIf="control.uiType == 'Input'" nz-input [formControlName]="control.controlInstance">
-
-            <nz-select *ngIf="control.uiType == 'Single Selection'" [formControlName]="control.controlInstance">
-              <nz-option *ngFor="let option of control.options" [nzLabel]="option" [nzValue]="option"></nz-option>
-            </nz-select>
-
-            <nz-select *ngIf="control.uiType == 'Multi Selection'" [formControlName]="control.controlInstance"
-              [nzMode]="'tags'">
-              <nz-option *ngFor="let option of control.options" [nzLabel]="option" [nzValue]="option"></nz-option>
-            </nz-select>
-
-          </nz-form-control>
-        </nz-form-item>
-      </form>
-    </nz-tab>
-
   </nz-tabset>
+  <ng-template #customEmptyTpl>
+    <div style="text-align: center;">
+      <p>The category has not been given any custom attributes.</p>
+    </div>
+  </ng-template>
 
 
 

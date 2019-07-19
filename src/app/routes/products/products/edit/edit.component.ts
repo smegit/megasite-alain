@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { NzModalRef, NzMessageService, UploadFile } from 'ng-zorro-antd';
+import { Component, OnInit, ViewChild, ElementRef, TemplateRef } from '@angular/core';
+import { NzModalRef, NzMessageService, UploadFile, NzEmptyService } from 'ng-zorro-antd';
 import { _HttpClient, JSONP } from '@delon/theme';
 import { SFSchema, SFUISchema } from '@delon/form';
 import { FormGroup, FormBuilder, Validators, FormControl, ValidationErrors } from '@angular/forms';
@@ -35,7 +35,6 @@ export class ProductsProductsEditComponent implements OnInit {
     { label: 'Schematic', value: 'Schematic' },
   ];
 
-
   @ViewChild("model") modelField: ElementRef;
 
   constructor(
@@ -48,6 +47,7 @@ export class ProductsProductsEditComponent implements OnInit {
     private approvalSrv: ApprovalService,
     private domSanitizer: DomSanitizer,
     private featureSrv: FeatureService,
+    private nzEmptySrv: NzEmptyService
   ) { }
 
   ngOnInit(): void {
@@ -55,7 +55,7 @@ export class ProductsProductsEditComponent implements OnInit {
     this.productForm = this.fb.group({
       model_number: [null, [Validators.required]],
       description: [null],
-      type: [null],
+      type: [null, [Validators.required]],
       feature: [null]
       // data: this.fb.group(this.createData()),
     });

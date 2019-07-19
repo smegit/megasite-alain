@@ -312,6 +312,8 @@ export class ApprovalListEditComponent implements OnInit {
               this.loading = false;
             }
           )
+        } else {
+          this.loading = false;
         }
 
 

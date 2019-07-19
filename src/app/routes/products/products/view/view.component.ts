@@ -15,6 +15,8 @@ export class ProductsProductsViewComponent implements OnInit {
   i: any;
   data: any = {};
   customAttributes: any[] = [];
+  attachmentTypes: [];
+  coverImageUrls: any[] = [];
   constructor(
     private modal: NzModalRef,
     public msgSrv: NzMessageService,
@@ -32,7 +34,19 @@ export class ProductsProductsViewComponent implements OnInit {
     forkJoin([prodData, customAttr]).subscribe(results => {
       this.data = results[0];
       this.customAttributes = results[1];
-    })
+
+      this.attachmentTypes =
+        this.data['attachment'].map(e => e.type).filter((value, index, self) => { return self.indexOf(value) === index });
+      if (Array.isArray(this.data['attachment'])) {
+        this.data['attachment'].forEach(e => {
+          if (e.type == 'CoverImage') {
+            this.coverImageUrls.push(e.url);
+          }
+        });
+      }
+      console.info(this.attachmentTypes);
+    });
+
   }
 
   close() {

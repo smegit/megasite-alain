@@ -16,10 +16,11 @@ export class CategoryService {
   ) { }
 
   // get categories
-  getCategories(limit: string, offset: string): Observable<any> {
+  getCategories(limit: string, offset: string, query: any): Observable<any> {
     const options = {
       limit: limit,
-      offset: offset
+      offset: offset,
+      query: query
     };
     return this._httpClient.get(`${this.categoryUrl}`, options);
   }

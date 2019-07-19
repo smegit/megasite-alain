@@ -16,9 +16,9 @@
       "hideInBreadcrumb": true,
       "children": [
         {
-          "text": "Category",
+          "text": "System Control",
           "link": "/category",
-          "i18n": "menu.category",
+          "i18n": "menu.system-control",
           "icon": "anticon anticon-dashboard",
           "children": [
             {
@@ -30,6 +30,11 @@
               "text": "Attributes",
               "link": "/category/attribute",
               "i18n": "menu.category.attribute"
+            },
+            {
+              "text": "Function",
+              "link": "/function/list",
+              "i18n": "menu.functions"
             }
           ]
         },

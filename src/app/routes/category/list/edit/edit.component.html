@@ -24,7 +24,7 @@
           Please input category name!
         </ng-container>
         <ng-container *ngIf="categoryForm.get('name')?.hasError('duplicated')">
-          The category already exist!
+          {{ categoryForm.get('name').value }} already exist!
         </ng-container>
         <ng-container *ngIf="categoryForm.get('name')?.pending">
           Validating...

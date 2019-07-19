@@ -4,6 +4,18 @@
   </ng-template>
 </page-header>
 <nz-card>
-  <sf mode="search" [schema]="searchSchema" (formSubmit)="st.reset($event)" (formReset)="st.reset($event)"></sf>
+  <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()">
+    <nz-form-item>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="q.name" [ngModelOptions]="{standalone: true}" placeholder="Search category" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button type="submit" nzType="primary">Search</button>
+        <button nz-button type="reset" (click)="reset()">Reset</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
   <st #st [total]="total" [data]="data" [columns]="columns" [page]="page" (change)="stChange($event)"></st>
 </nz-card>

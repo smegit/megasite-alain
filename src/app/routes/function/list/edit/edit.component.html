@@ -1,0 +1,92 @@
+<div class="modal-header">
+  <div class="modal-title">编辑 {{ record.id }} 信息</div>
+</div>
+<!-- <nz-spin *ngIf="!i" class="modal-spin"></nz-spin> -->
+<!-- <sf *ngIf="i" #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+    <button nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid" [nzLoading]="http.loading">保存</button>
+  </div>
+</sf> -->
+
+
+<form nz-form [formGroup]="funForm">
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzRequired nzFor="function_code">Function Code
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="function_code" id="function_code"
+        placeholder="only allow lowercase and underscore, eg.'pre_cooling'" />
+      <nz-form-explain *ngIf="funForm.get('function_code')?.dirty && funForm.get('function_code')?.errors ||
+              funForm.get('function_code')?.pending">
+        <ng-container *ngIf="funForm.get('function_code')?.hasError('required')">
+          Please input Function Code!
+        </ng-container>
+        <ng-container *ngIf="funForm.get('function_code')?.hasError('wrongFormat')">
+          Only allow lowercase and underscore.
+        </ng-container>
+        <ng-container *ngIf="funForm.get('function_code')?.hasError('duplicated')">
+          {{ funForm.get('function_code').value }} already exist!
+        </ng-container>
+        <ng-container *ngIf="funForm.get('function_code')?.pending">
+          Validating...
+        </ng-container>
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <!-- <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="product_type">Product Type
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <nz-select nzPlaceHolder="optional" formControlName="product_type">
+        <nz-option *ngFor="let option of listOfProductType" [nzLabel]="option.label" [nzValue]="option.value">
+        </nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item> -->
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">Description
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="description" />
+      <nz-form-explain *ngIf="funForm.get('description')?.dirty && funForm.get('description')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="url">Url
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <input nz-input formControlName="url" />
+      <nz-form-explain *ngIf="funForm.get('url')?.dirty && funForm.get('url')?.errors">
+        The input is invalid.
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Icon
+    </nz-form-label>
+    <nz-form-control [nzMd]="12" [nzSm]="24">
+      <img *ngIf="funForm.get('url')?.value != null" [src]="funForm.get('url')?.value" class="icon-img" />
+      <nz-upload [nzBeforeUpload]="beforeUpload" [nzRemove]="remove" [(nzFileList)]="fileList">
+        <button nz-button>
+          <span><i nz-icon nzType="upload"></i> Upload</span>
+        </button>
+      </nz-upload>
+    </nz-form-control>
+  </nz-form-item>
+
+
+
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">Close</button>
+    <button nz-button type="submit" nzType="primary" (click)="submitForm()" [nzLoading]="http.loading">Save</button>
+  </div>
+</form>
