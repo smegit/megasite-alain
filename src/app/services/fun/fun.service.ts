@@ -40,15 +40,15 @@ export class FunService {
     return this._httpClient.get(`${this.funUrl}/${id}`);
   }
 
-  // // delete a attachment
-  // deleteItsAttachment(id, attachment_id): Observable<any> {
-  //   return this._httpClient.delete(`${this.categoryUrl}/${id}/attachment/${attachment_id}`);
-  // }
+  // delete a function
+  deleteFun(id): Observable<any> {
+    return this._httpClient.delete(`${this.funUrl}/${id}`);
+  }
 
-  // // get all categories
-  // getAll(): Observable<any> {
-  //   return this._httpClient.get(`${this.categoryUrl}/all`);
-  // }
+  // get all functions
+  getAll(): Observable<any> {
+    return this._httpClient.get(`${this.funUrl}/all`);
+  }
 
   // // get all attributes that belong to a category
   // getItsAttributes(id): Observable<any> {

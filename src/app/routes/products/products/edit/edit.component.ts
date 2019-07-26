@@ -9,6 +9,8 @@ import { Observable, forkJoin, Observer } from 'rxjs';
 import { ApprovalService } from 'app/services/approval/approval.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FeatureService } from 'app/services/feature/feature.service';
+import { AttributeService } from 'app/services/attribute/attribute.service';
+import { FunService } from 'app/services/fun/fun.service';
 
 @Component({
   selector: 'app-products-products-edit',
@@ -18,6 +20,7 @@ import { FeatureService } from 'app/services/feature/feature.service';
 export class ProductsProductsEditComponent implements OnInit {
   record: any = {};
   i: any;
+  copy: boolean;
   // categoryId: any = '';
   selectedValue = 14;
   productForm: FormGroup;
@@ -28,9 +31,12 @@ export class ProductsProductsEditComponent implements OnInit {
   //listOfCategory: Array<{ label: string; value: string }> = [];
   listOfCategory: any[] = [];
   featureOptions: any[] = [];
+  statusOptions: any[] = [];
+  funOptions: any[] = [];
   fileList: UploadFile[] = [];
   approvalList: any[] = [];
   fileTypeOptions: Array<{ label: string; value: string }> = [
+    { label: 'CoverImage', value: 'CoverImage' },
     { label: 'Image', value: 'Image' },
     { label: 'Schematic', value: 'Schematic' },
   ];
@@ -47,7 +53,9 @@ export class ProductsProductsEditComponent implements OnInit {
     private approvalSrv: ApprovalService,
     private domSanitizer: DomSanitizer,
     private featureSrv: FeatureService,
-    private nzEmptySrv: NzEmptyService
+    private nzEmptySrv: NzEmptyService,
+    private attrSrv: AttributeService,
+    private funSrv: FunService
   ) { }
 
   ngOnInit(): void {
@@ -56,7 +64,9 @@ export class ProductsProductsEditComponent implements OnInit {
       model_number: [null, [Validators.required]],
       description: [null],
       type: [null, [Validators.required]],
-      feature: [null]
+      feature: [null],
+      ean: [null],
+      status: [null],
       // data: this.fb.group(this.createData()),
     });
 
@@ -66,8 +76,10 @@ export class ProductsProductsEditComponent implements OnInit {
     let allApprovals = this.approvalSrv.getAll();
     let allCategories = this.cateSrv.getAll();
     let allFeaturesByType = this.featureSrv.getFeaturesByType(this.record.type);
+    let allStatusOptions = this.attrSrv.getAttributeByName('status');
+    let allFunOptions = this.funSrv.getAll();
 
-    forkJoin([allApprovals, allCategories, allFeaturesByType]).subscribe(results => {
+    forkJoin([allApprovals, allCategories, allFeaturesByType, allStatusOptions, allFunOptions]).subscribe(results => {
       this.transferListSource = results[0].map(obj => {
         return {
           id: obj.id,
@@ -87,6 +99,13 @@ export class ProductsProductsEditComponent implements OnInit {
           label: res.name,
         }
       });
+      this.statusOptions = results[3].options;
+      this.funOptions = results[4].map(obj => {
+        return {
+          value: obj.function_code,
+          label: obj.description,
+        }
+      })
 
       if (this.record.id > 0) {
         this.prodSrv.getProduct(`${this.record.id}`).subscribe(res => {
@@ -96,6 +115,9 @@ export class ProductsProductsEditComponent implements OnInit {
           this.approvalList = res.approval.map(obj => obj.id);
           res.feature = res.feature.map(obj => obj.id);
           console.info(res);
+          if (this.copy) {
+            res.model_number = `${res.model_number} - copy`;
+          }
           this.productForm.patchValue(res);
           this.transferListSource = this.transferListSource.map(obj => {
             return {
@@ -233,7 +255,7 @@ export class ProductsProductsEditComponent implements OnInit {
       formData.append('approval_list', JSON.stringify(this.approvalList));
       console.info(this.approvalList);
 
-      if (this.record.id > 0) {
+      if (this.record.id > 0 && !this.copy) {
         this.prodSrv.updateProduct(this.record.id, formData).subscribe(
           res => {
             console.info(res);

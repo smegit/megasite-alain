@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Product {{ record.id }} </div>
+  <div class="modal-title" *ngIf="record.id > 0 && !copy; else addNew">Edit Product {{ record.id }} </div>
   <ng-template #addNew>
     <div class="modal-title">Add Product</div>
   </ng-template>
@@ -75,6 +75,24 @@
         </nz-form-control>
       </nz-form-item>
 
+      <nz-form-item>
+        <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="ean">EAN
+        </nz-form-label>
+        <nz-form-control [nzMd]="16" [nzSm]="24">
+          <input nz-input #model formControlName="ean" id="ean" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="status">Status
+        </nz-form-label>
+        <nz-form-control [nzMd]="16" [nzSm]="24">
+          <nz-select formControlName="status">
+            <nz-option *ngFor="let option of statusOptions" [nzLabel]="option" [nzValue]="option"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
       <!-- <nz-form-item>
         <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Approvals
         </nz-form-label>
@@ -112,9 +130,15 @@
               <nz-option *ngFor="let option of control.options" [nzLabel]="option" [nzValue]="option"></nz-option>
             </nz-select>
 
-            <nz-select *ngIf="control.uiType == 'Multi Selection'" [formControlName]="control.controlInstance"
-              [nzMode]="'tags'">
+            <nz-select *ngIf="control.uiType == 'Multi Selection' && control.controlInstance != 'function_list'"
+              [formControlName]="control.controlInstance" [nzMode]="'tags'">
               <nz-option *ngFor="let option of control.options" [nzLabel]="option" [nzValue]="option"></nz-option>
+            </nz-select>
+
+            <nz-select *ngIf="control.uiType == 'Multi Selection' && control.controlInstance == 'function_list'"
+              [formControlName]="control.controlInstance" [nzMode]="'tags'">
+              <nz-option *ngFor="let option of funOptions" [nzLabel]="option.label" [nzValue]="option.value">
+              </nz-option>
             </nz-select>
 
           </nz-form-control>

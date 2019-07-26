@@ -20,11 +20,12 @@ export class ApprovalService {
   ) { }
 
   // get approvals
-  getApprovals(limit: string, offset: string): Observable<any> {
+  getApprovals(limit: string, offset: string, query: any): Observable<any> {
     console.info('getApproval called');
     const options = {
       limit: limit,
-      offset: offset
+      offset: offset,
+      query: query
     }
     return this._httpClient.get(`${this.approvalUrl}`, options);
   }

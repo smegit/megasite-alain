@@ -16,10 +16,22 @@
       "hideInBreadcrumb": true,
       "children": [
         {
+          "text": "Products",
+          "link": "/products",
+          "i18n": "menu.products",
+          "icon": "anticon anticon-unordered-list"
+        },
+        {
+          "text": "Approvals",
+          "link": "/approval",
+          "i18n": "menu.approvals",
+          "icon": "anticon anticon-safety-certificate"
+        },
+        {
           "text": "System Control",
           "link": "/category",
           "i18n": "menu.system-control",
-          "icon": "anticon anticon-dashboard",
+          "icon": "anticon anticon-control",
           "children": [
             {
               "text": "Category",
@@ -32,56 +44,16 @@
               "i18n": "menu.category.attribute"
             },
             {
+              "text": "Features",
+              "link": "/feature",
+              "i18n": "menu.features"
+            },
+            {
               "text": "Function",
               "link": "/function/list",
               "i18n": "menu.functions"
             }
           ]
-        },
-        {
-          "text": "Products",
-          "link": "/products",
-          "i18n": "menu.products",
-          "icon": "anticon anticon-dashboard"
-        },
-        {
-          "text": "Features",
-          "link": "/feature",
-          "i18n": "menu.features",
-          "icon": "anticon anticon-rocket"
-        },
-        {
-          "text": "Approvals",
-          "link": "/approval",
-          "i18n": "menu.approvals",
-          "icon": "anticon anticon-appstore",
-          "badge": 2
-        },
-        {
-          "text": "System Controls",
-          "i18n": "menu.system-control",
-          "icon": "anticon anticon-appstore",
-          "badge": 2
-        }
-      ]
-    },
-    {
-      "text": "More",
-      "i18n": "menu.more",
-      "group": true,
-      "hideInBreadcrumb": true,
-      "children": [
-        {
-          "text": "Profile",
-          "i18n": "menu.profile",
-          "icon": "anticon anticon-cloud",
-          "children": []
-        },
-        {
-          "text": "Settings",
-          "i18n": "menu.extras.settings",
-          "icon": "anticon anticon-link",
-          "children": []
         }
       ]
     }

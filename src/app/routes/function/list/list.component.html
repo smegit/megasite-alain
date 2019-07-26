@@ -4,6 +4,6 @@
   </ng-template>
 </page-header>
 <nz-card>
-  <sf mode="search" [schema]="searchSchema" (formSubmit)="st.reset($event)" (formReset)="st.reset($event)"></sf>
+  <sf #sf mode="search" [schema]="searchSchema" (formSubmit)="getData()" (formReset)="st.reset($event)"></sf>
   <st #st [total]="total" [data]="data" [columns]="columns" [page]="page" (change)="stChange($event)"></st>
 </nz-card>

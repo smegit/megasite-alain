@@ -4,6 +4,7 @@ import { _HttpClient } from '@delon/theme';
 import { ProductService } from 'app/services/product/product.service';
 import { CategoryService } from 'app/services/category/category.service';
 import { forkJoin } from 'rxjs';
+import { FunService } from 'app/services/fun/fun.service';
 
 @Component({
   selector: 'app-products-products-view',
@@ -17,21 +18,25 @@ export class ProductsProductsViewComponent implements OnInit {
   customAttributes: any[] = [];
   attachmentTypes: [];
   coverImageUrls: any[] = [];
+  funOptions: any[] = [];
   constructor(
     private modal: NzModalRef,
     public msgSrv: NzMessageService,
     public http: _HttpClient,
     private prodSrv: ProductService,
-    private cateSrv: CategoryService
+    private cateSrv: CategoryService,
+    private funSrv: FunService,
   ) { }
 
   ngOnInit(): void {
     // this.http.get(`/user/1`).subscribe(res => this.i = res);
     let prodData = this.prodSrv.getProduct(this.record.id);
     let customAttr = this.cateSrv.getItsAttributes(this.record.type);
+    let allFunOptions = this.funSrv.getAll();
+
     // this.prodSrv.getProduct(this.record.id).subscribe(res => this.data = res);
 
-    forkJoin([prodData, customAttr]).subscribe(results => {
+    forkJoin([prodData, customAttr, allFunOptions]).subscribe(results => {
       this.data = results[0];
       this.customAttributes = results[1];
 
@@ -45,6 +50,7 @@ export class ProductsProductsViewComponent implements OnInit {
         });
       }
       console.info(this.attachmentTypes);
+      this.funOptions = results[2];
     });
 
   }
@@ -61,5 +67,13 @@ export class ProductsProductsViewComponent implements OnInit {
     console.info('onClickImg called');
     console.info(evt);
     window.open(evt);
+  }
+  getFunUrl(fun_code) {
+    const found = this.funOptions.find((e) => e.function_code == fun_code);
+    return found == undefined ? '' : found.url;
+  }
+  getDescription(fun_code) {
+    const found = this.funOptions.find((e) => e.function_code == fun_code);
+    return found == undefined ? fun_code : found.description;
   }
 }

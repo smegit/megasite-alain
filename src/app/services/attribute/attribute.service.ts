@@ -47,5 +47,9 @@ export class AttributeService {
   checkName(name): Observable<any> {
     return this._httpClient.get(`${this.attributeUrl}/check/${name}`);
   }
+  // get attribute by name
+  getAttributeByName(name): Observable<any> {
+    return this._httpClient.get(`${this.attributeUrl}/getByName/${name}`);
+  }
 
 }

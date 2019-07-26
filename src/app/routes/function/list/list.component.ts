@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent, STChange, STPage } from '@delon/abc';
-import { SFSchema } from '@delon/form';
+import { SFSchema, SFComponent } from '@delon/form';
 import { FunService } from '../../../services/fun/fun.service';
 import { FunctionListEditComponent } from './edit/edit.component';
+import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-function-list',
@@ -17,13 +18,14 @@ export class FunctionListComponent implements OnInit {
   data: any[] = [];
   searchSchema: SFSchema = {
     properties: {
-      no: {
+      name: {
         type: 'string',
-        title: '编号'
+        title: '',
       }
     }
   };
   @ViewChild('st') st: STComponent;
+  @ViewChild('sf') sf: SFComponent;
   page: STPage = {
     front: false,
     //total: '123',
@@ -40,8 +42,9 @@ export class FunctionListComponent implements OnInit {
     {
       title: '',
       buttons: [
-        { text: 'View', click: (item: any) => this.openView(item) },
+        // { text: 'View', click: (item: any) => this.openView(item) },
         { text: 'Edit', click: (item: any) => this.openEdit(item) },
+        { text: 'Delete', click: (item: any) => this.onDelete(item) },
       ]
     }
   ];
@@ -49,7 +52,10 @@ export class FunctionListComponent implements OnInit {
   constructor(
     private http: _HttpClient,
     private modal: ModalHelper,
-    private funSrv: FunService
+    private modalSrv: NzModalService,
+    private funSrv: FunService,
+    private msgSrv: NzMessageService,
+
   ) { }
 
   ngOnInit() {
@@ -60,7 +66,10 @@ export class FunctionListComponent implements OnInit {
     console.info('getData called');
     const l = limit ? limit : '10';
     const o = offset ? offset : '0';
-    const query = JSON.stringify(this.q);
+    console.info(this.sf.value);
+    const query = this.sf.value == undefined ? JSON.stringify({}) : JSON.stringify(this.sf.value);
+    console.info(query);
+
     this.funSrv.getFuns(l, o, query).subscribe(
       res => {
         this.data = res.rows;
@@ -70,6 +79,10 @@ export class FunctionListComponent implements OnInit {
       },
       err => console.error('error', err),
     );
+  }
+  search(formValue) {
+    console.info('search called');
+    console.info(formValue);
   }
 
   // listener for table event
@@ -102,6 +115,27 @@ export class FunctionListComponent implements OnInit {
   openView(record) {
 
   }
+  // Delete function
+  onDelete(record) {
+    console.info('showConfirmModal called');
+    console.info(record);
+    this.modalSrv.confirm({
+      nzTitle: `Do you want to delete item - ${record.function_code}?`,
+      nzContent: 'When clicked the OK button, the item will be deleted permanently.',
+      nzOnOk: () => {
+        console.info('confirm clicked');
+        this.funSrv.deleteFun(record.id).subscribe(res => {
+          console.info(res);
+          if (res === null) {
+            this.msgSrv.create('success', `Function ${record.function_code} has been deleted successfully.`);
+            this.st.reload();
+          }
+        })
+      }
+    })
+
+  }
+
   clickIcon(record, instance) {
     console.info('clickIcon called');
     console.info(record);

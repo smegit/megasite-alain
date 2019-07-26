@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent, STPage, STChange } from '@delon/abc';
-import { SFSchema } from '@delon/form';
+import { SFSchema, SFComponent } from '@delon/form';
 import { ApprovalService } from '../../../services/approval/approval.service';
 
 import { ApprovalListViewComponent } from './view/view.component';
@@ -17,13 +17,14 @@ export class ApprovalListComponent implements OnInit {
   data: any[] = [];
   searchSchema: SFSchema = {
     properties: {
-      no: {
+      approval_no: {
         type: 'string',
-        title: 'Approval NO.'
+        title: ''
       }
     }
   };
   @ViewChild('st') st: STComponent;
+  @ViewChild('sf') sf: SFComponent;
   page: STPage = {
     front: false,
     //total: '123',
@@ -76,7 +77,9 @@ export class ApprovalListComponent implements OnInit {
     const l = limit ? limit : '10';
     const o = offset ? offset : '0';
     this.loading = true;
-    this.approvalSrv.getApprovals(l, o).subscribe(res => {
+    const query = this.sf.value == undefined ? JSON.stringify({}) : JSON.stringify(this.sf.value);
+    console.info(query);
+    this.approvalSrv.getApprovals(l, o, query).subscribe(res => {
       this.data = res.rows;
       this.total = res.count;
       this.loading = false;

@@ -7,8 +7,7 @@
   <nz-tabset [nzSize]="'small'">
     <nz-tab nzTitle="Base">
       <sv label="Cover Image">
-        <img [src]="coverImageUrls[0]"
-          onerror="this.src='https://wolper.com.au/wp-content/uploads/2017/10/image-placeholder.jpg'"
+        <img [src]="coverImageUrls[0]" onerror="this.src='/assets/tmp/images/image-placeholder.jpg'"
           (click)="onClickImg(coverImageUrls[0])" style="max-width: 100px;margin-right: 10px;">
       </sv>
       <sv label="Model">{{ data.model_number }}</sv>
@@ -21,6 +20,8 @@
           </ng-template>
         </nz-list>
       </sv>
+      <sv label="EAN">{{ data.ean }}</sv>
+      <sv label="Status">{{ data.status }}</sv>
 
       <!-- <sv label="Attachment">
         <nz-carousel [nzEffect]="'scrollx'" [nzAutoPlay]="true" style="max-width: 400px">
@@ -59,12 +60,13 @@
         </nz-list> -->
         <ul *ngIf="item.ui_type == 'Multi Selection' && item.name =='function_list'" style="column-count: 2">
           <li *ngFor="let item of data.data[item.name]">
-            <img [src]="'/assets/tmp/images/products/function_icons/' + item  + '.jpg'" style="height: 40px;">
-            {{item}}
+            <!-- <img [src]="'/assets/tmp/images/products/function_icons/' + item  + '.jpg'" style="height: 40px;"> -->
+            <img [src]="getFunUrl(item)" style="height: 40px;">
+            {{getDescription(item)}}
           </li>
         </ul>
 
-        <span *ngIf="item.ui_type == 'Input'">
+        <span *ngIf="item.ui_type == 'Input' || item.ui_type == 'Single Selection'">
           {{data.data[item.name]}}
         </span>
       </sv>

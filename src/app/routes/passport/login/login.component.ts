@@ -168,7 +168,8 @@ export class UserLoginComponent implements OnDestroy {
         });
         // get app info
         this.startupSrv.load().then(() => {
-          let url = this.tokenService.referrer!.url || '/';
+          let url = this.tokenService.referrer!.url || '/products';
+          console.info(url);
           this.router.navigateByUrl(url);
         });
       });

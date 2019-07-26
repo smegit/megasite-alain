@@ -79,10 +79,7 @@ export class ProductsComponent implements OnInit {
           children: [{
             text: 'Copy',
             icon: '',
-            click: (record: any) => {
-              console.info('Copy clicked');
-              console.info(record);
-            }
+            click: (record: any) => this.openCopy(record),
           }, {
             text: 'Delete',
             //icon: 'delete',
@@ -179,7 +176,7 @@ export class ProductsComponent implements OnInit {
   openEdit(record) {
     console.info('openEdit called');
     console.info(record);
-    this.modal.createStatic(ProductsProductsEditComponent, { record }, { size: 'md' }).subscribe(
+    this.modal.createStatic(ProductsProductsEditComponent, { record, copy: false }, { size: 'md' }).subscribe(
       res => {
         console.info(res);
         this.st.reload();
@@ -200,11 +197,22 @@ export class ProductsComponent implements OnInit {
     )
   }
 
+  // Open copy modal
+  openCopy(record) {
+    console.info('openCopy called');
+    this.modal.createStatic(ProductsProductsEditComponent, { record, copy: true }, { size: 'md' }).subscribe(
+      res => {
+        console.info(res);
+        this.st.reload();
+      }
+    );
+  }
+
   showConfirmModal(record) {
     console.info('showConfirmModal called');
     console.info(record);
     this.modalSrv.confirm({
-      nzTitle: 'Do you want to delete this item?',
+      nzTitle: `Do you want to delete ${record.model_number}?`,
       nzContent: 'When clicked the OK button, the item will be deleted permanently.',
       nzOnOk: () => {
         console.info('confirm clicked');

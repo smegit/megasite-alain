@@ -35,7 +35,7 @@ export class CategoryListComponent implements OnInit {
     { title: 'Id', index: 'id' },
     { title: 'Name', index: 'name' },
     { title: 'Description', index: 'description' },
-    { title: 'Parent', index: 'parent_id' },
+    // { title: 'Parent', index: 'parent_id' },
     {
       title: '',
       buttons: [
