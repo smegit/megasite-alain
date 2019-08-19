@@ -68,4 +68,8 @@ export class ApprovalService {
   getAll(): Observable<any> {
     return this._httpClient.get(`${this.approvalUrl}/all`);
   }
+  // check approval no duplicates
+  checkDuplicates(approvalNo): Observable<any> {
+    return this._httpClient.get(`${this.approvalUrl}/check/${approvalNo}`);
+  }
 }

@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NzModalRef, NzMessageService, UploadFile } from 'ng-zorro-antd';
+import { NzModalRef, NzMessageService, UploadFile, TransferItem } from 'ng-zorro-antd';
 import { UploadChangeParam } from 'ng-zorro-antd/upload';
 import { _HttpClient } from '@delon/theme';
 import { SFSchema, SFUISchema, SFSchemaEnumType } from '@delon/form';
 import { ApprovalService } from '../../../../services/approval/approval.service';
 import { environment } from '../../../../../environments/environment';
-import { of, Observable } from 'rxjs';
+import { of, Observable, Observer } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormArray, ValidationErrors } from '@angular/forms';
 import { ProductService } from 'app/services/product/product.service';
+import { CategoryService } from 'app/services/category/category.service';
 
 @Component({
   selector: 'app-approval-list-edit',
@@ -23,6 +24,8 @@ export class ApprovalListEditComponent implements OnInit {
   approvalForm: FormGroup;
   transferListSource: any[] = [];
   prodList: any[] = [];
+  allTypeOpts: any[] = [];
+  selected_types: any[] = [];
 
   // {
   //   name: "demo中文.pdf",
@@ -263,7 +266,8 @@ export class ApprovalListEditComponent implements OnInit {
     public http: _HttpClient,
     private approvalSrv: ApprovalService,
     private fb: FormBuilder,
-    private prodSrv: ProductService
+    private prodSrv: ProductService,
+    private cateSrv: CategoryService,
   ) { }
 
   ngOnInit(): void {
@@ -282,31 +286,61 @@ export class ApprovalListEditComponent implements OnInit {
       expiry_date: [null, [Validators.required]],
       description: [null],
       notes: [null],
+      product_types: [null],
+    });
+
+    this.cateSrv.getAll().subscribe(res => {
+      console.info(res);
+      this.allTypeOpts = res.map(obj => {
+        return {
+          value: obj.id,
+          label: obj.name
+        }
+      });
     });
 
     this.prodSrv.getAll().subscribe(
       res => {
+        console.info(res);
         this.transferListSource = res.map(obj => {
           return {
             id: obj.id,
             title: obj.model_number,
-            direction: 'left'
+            type: obj.type,
+            direction: 'left',
           };
         });
 
         if (this.record.id > 0) {
+          // disable approval_no field
+          this.approvalForm.get('approval_no').disable({ onlySelf: true });
           this.approvalSrv.showApproval(this.record.id).subscribe(
             res => {
               //this.i = res;
               this.prodList = res.product.map(obj => obj.id);
               this.fileList = res.attachment;
               this.approvalForm.patchValue(res);
+              console.info()
 
               this.transferListSource = this.transferListSource.map(obj => {
+                const selectTypesArray = this.approvalForm.get('product_types').value || [];
+                let hide;
+                if (selectTypesArray.length > 0) {
+                  if (selectTypesArray.includes(obj.type)) {
+                    hide = false;
+                  } else {
+                    hide = true;
+                  }
+                } else {
+                  hide = false;
+                }
+
                 return {
                   id: obj.id,
                   title: obj.title,
+                  type: obj.type,
                   direction: this.prodList.includes(obj.id) ? 'right' : 'left',
+                  _hiden: hide,
                 }
               });
               this.loading = false;
@@ -314,6 +348,8 @@ export class ApprovalListEditComponent implements OnInit {
           )
         } else {
           this.loading = false;
+          // set async validator for approval no
+          this.approvalForm.get('approval_no').setAsyncValidators([this.approvalNoAsyncValidator]);
         }
 
 
@@ -321,6 +357,20 @@ export class ApprovalListEditComponent implements OnInit {
 
 
   }
+
+  approvalNoAsyncValidator = (control: FormControl) =>
+    new Observable((observer: Observer<ValidationErrors | null>) => {
+      this.approvalSrv.checkDuplicates(control.value).subscribe(res => {
+        console.info(res);
+        if (res.success) {
+          observer.next(null);
+        } else {
+          observer.next({ error: true, duplicated: true });
+        }
+        observer.complete();
+      })
+    });
+
 
   beforeUpload = (file: UploadFile): boolean => {
     this.fileList = this.fileList.concat(file);
@@ -351,12 +401,17 @@ export class ApprovalListEditComponent implements OnInit {
     });
   }
 
+  filterOpts = (inputValue: string, item: TransferItem) => {
+    console.info(inputValue);
+    console.info(item);
+  };
 
   submitForm() {
     console.info('submitForm called');
     console.info(this.approvalForm.value);
     const formData = new FormData();
-    const approvalFormValue = this.approvalForm.value;
+    //const approvalFormValue = this.approvalForm.value;
+    const approvalFormValue = this.approvalForm.getRawValue();
     const activeFileList = this.fileList.filter(file => !(file.id > 0));
 
     console.info(approvalFormValue);
@@ -370,7 +425,12 @@ export class ApprovalListEditComponent implements OnInit {
         //}
       });
       for (let key in approvalFormValue) {
-        formData.append(key, approvalFormValue[key] != null ? approvalFormValue[key] : '');
+        if (key == 'product_types') {
+          console.info(approvalFormValue[key]);
+          formData.append(key, approvalFormValue[key] != null ? JSON.stringify(approvalFormValue[key]) : '');
+        } else {
+          formData.append(key, approvalFormValue[key] != null ? approvalFormValue[key] : '');
+        }
       }
       this.uploading = true;
       for (const i in this.approvalForm.controls) {
@@ -433,5 +493,40 @@ export class ApprovalListEditComponent implements OnInit {
   }
   close() {
     this.modal.destroy();
+  }
+
+  // Selection change event
+  onTypeChange(evt) {
+    console.info('onTypeChange called');
+    //console.info(evt);
+    // console.info(this.approvalForm.get('product_type').value);
+    const selectTypesArray = this.approvalForm.get('product_types').value;
+    console.info(selectTypesArray);
+    // this.transferListSource.forEach(obj => obj._hiden = false);
+    this.transferListSource = this.transferListSource.map(obj => {
+      //console.info(obj);
+      //console.info(selectTypesArray.indexOf(obj.type));
+      let hide;
+      if (selectTypesArray.length > 0) {
+        if (selectTypesArray.includes(obj.type)) {
+          hide = false;
+        } else {
+          hide = true;
+        }
+      } else {
+        hide = false;
+      }
+      return {
+        direction: obj.direction,
+        id: obj.id,
+        title: obj.title,
+        type: obj.type,
+        _hiden: hide,
+      }
+    })
+    // this.transferListSource.forEach(item => selectTypesArray.includes(item.type) ? item._hiden = false : item._hiden = true);
+    console.info(this.transferListSource);
+
+
   }
 }

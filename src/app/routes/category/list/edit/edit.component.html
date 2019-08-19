@@ -65,6 +65,15 @@
     </nz-form-control>
   </nz-form-item>
 
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Sorter
+    </nz-form-label>
+    <nz-form-control [nzMd]="18" [nzSm]="24">
+      <nz-select formControlName="sorter" [nzMode]="'tags'" nzPlaceHolder="optional">
+        <nz-option *ngFor="let option of listOfSorter" [nzLabel]="option" [nzValue]="option"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Image

@@ -19,6 +19,11 @@ export class CategoryAttributeEditComponent implements OnInit {
     { label: 'Single Selection', value: 'Single Selection' },
     { label: 'Multi Selection', value: 'Multi Selection' }
   ];
+  listOfGroup: Array<{ label: string; value: string }> = [
+    { label: 'Most Important', value: 'most_important' },
+    { label: 'Important', value: 'important' },
+    { label: 'Not Important', value: 'not_important' }
+  ];
 
   constructor(
     private modal: NzModalRef,
@@ -35,7 +40,9 @@ export class CategoryAttributeEditComponent implements OnInit {
       description: [null],
       ui_type: [null, [Validators.required]],
       input_type: [null],
-      options: [null]
+      options: [null],
+      seq_group: [null],
+      sequence: [null]
     });
 
 
@@ -50,18 +57,7 @@ export class CategoryAttributeEditComponent implements OnInit {
       }
     );
 
-    // auto-complete 'label' field
-    this.attributeForm.get('name').valueChanges.subscribe(
-      (name: string) => {
-        console.info('name changed');
-        const splitStr = name.toLowerCase().split('_');
-        for (let i = 0; i < splitStr.length; i++) {
-          splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-        }
-        const label = splitStr.join(' ');
-        this.attributeForm.get('label').setValue(label);
-      }
-    )
+
     // // get all attributes
     // this.attributeSrv.getAllAttributes().subscribe(
     //   (res) => {
@@ -71,6 +67,8 @@ export class CategoryAttributeEditComponent implements OnInit {
 
     // get details
     if (this.record.id > 0) {
+      // disable 'name' input
+      this.attributeForm.get('name').disable();
       this.attributeSrv.showAttribute(this.record.id).subscribe(
         (res) => {
           this.attributeForm.patchValue(res);
@@ -78,12 +76,24 @@ export class CategoryAttributeEditComponent implements OnInit {
       );
     } else {
       this.attributeForm.get('name').setAsyncValidators([this.attrNameAsyncValidator]);
+      // auto-complete 'label' field
+      this.attributeForm.get('name').valueChanges.subscribe(
+        (name: string) => {
+          console.info('name changed');
+          const splitStr = name.toLowerCase().split('_');
+          for (let i = 0; i < splitStr.length; i++) {
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+          }
+          const label = splitStr.join(' ');
+          this.attributeForm.get('label').setValue(label);
+        }
+      )
     }
   }
 
   // submit form
   submitForm() {
-    const attributeFormValue = this.attributeForm.value;
+    const attributeFormValue = this.attributeForm.getRawValue();
     console.info(attributeFormValue);
 
 

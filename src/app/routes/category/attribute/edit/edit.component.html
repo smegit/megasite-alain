@@ -19,7 +19,7 @@
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <input nz-input formControlName="name" id="name"
-        placeholder="only allow lowercase and underscore, eg. 'function_list'" />
+        placeholder="only allow lowercase and underscore, eg. 'function_list'" style="color: currentColor" />
       <nz-form-explain
         *ngIf="attributeForm.get('name')?.dirty && attributeForm.get('name')?.errors || attributeForm.get('name')?.pending">
         <ng-container *ngIf="attributeForm.get('name')?.hasError('required')">
@@ -101,6 +101,28 @@
       <nz-form-explain *ngIf="attributeForm.get('options')?.dirty && attributeForm.get('options')?.errors">
         This filed is required.
       </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">
+      <span>Group
+        <i nz-icon nz-tooltip nzTitle="This is used to group attributes" type="question-circle" theme="outline"></i>
+      </span>
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <nz-select formControlName="seq_group" [nzMode]="'tags'" [nzMaxMultipleCount]="1" nzPlaceHolder="optional">
+        <nz-option *ngFor="let option of listOfGroup" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">Sequence
+    </nz-form-label>
+    <nz-form-control [nzMd]="16" [nzSm]="24">
+      <nz-input-number formControlName="sequence" id="sequence" [nzMin]="1" [nzMax]="20" [nzStep]="1"
+        [nzPlaceHolder]="'optional'"></nz-input-number>
     </nz-form-control>
   </nz-form-item>
 

@@ -32,6 +32,12 @@ export class CategoryListEditComponent implements OnInit {
   attributesList: any[] = [];
   uploading = false;
   categoryForm: FormGroup;
+  // listOfSorter: Array<{ label: string; value: string }> = [
+  //   { label: 'Most Important', value: 'most_important' },
+  //   { label: 'Important', value: 'important' },
+  //   { label: 'Not Important', value: 'not_important' }
+  // ];
+  listOfSorter = [];
 
   constructor(
     private modal: NzModalRef,
@@ -52,6 +58,7 @@ export class CategoryListEditComponent implements OnInit {
       description: [null],
       parent_id: [null],
       image: [null],
+      sorter: [null],
       // att_list: [null]
     });
     console.info(this.record);
@@ -63,11 +70,13 @@ export class CategoryListEditComponent implements OnInit {
     // get attributes
     this.attributeSrv.getAllAttributes().subscribe(
       (res) => {
+        console.info(res);
         this.transferListSource = res.map(obj => {
           return {
             key: obj.id,
             title: obj.label,
             direction: 'left',
+            seq_group: Array.isArray(obj.seq_group) ? obj.seq_group[0] : null
           }
         });
         // get category details if needed
@@ -82,24 +91,30 @@ export class CategoryListEditComponent implements OnInit {
 
               // init transfer box 
               this.transferListSource = this.transferListSource.map(obj => {
+                if (this.attributesList.includes(obj.key)) {
+                  if (obj.seq_group != null && !this.listOfSorter.includes(obj.seq_group)) {
+                    this.listOfSorter.push(obj.seq_group);
+                  }
+                }
                 return {
                   key: obj.key,
                   title: obj.title,
                   direction: this.attributesList.includes(obj.key) ? 'right' : 'left',
+                  seq_group: obj.seq_group
                 }
-              })
+              });
+              console.info(this.listOfSorter);
+              console.info(this.transferListSource);
+
             }
           );
+
         } else {
           // for newly created category, should validate category first 
           this.categoryForm.get('name').setAsyncValidators([this.cateNameAsyncValidator]);
         }
       }
     );
-
-
-    console.info(this.transferListSource);
-
   }
 
 

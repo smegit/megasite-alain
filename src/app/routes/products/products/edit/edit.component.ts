@@ -81,10 +81,12 @@ export class ProductsProductsEditComponent implements OnInit {
 
     forkJoin([allApprovals, allCategories, allFeaturesByType, allStatusOptions, allFunOptions]).subscribe(results => {
       this.transferListSource = results[0].map(obj => {
+        console.info(obj);
         return {
           id: obj.id,
           title: obj.approval_no,
-          direction: 'left'
+          direction: 'left',
+          product_types: obj.product_types || []
         }
       });
       this.listOfCategory = results[1].map(res => {
@@ -119,13 +121,33 @@ export class ProductsProductsEditComponent implements OnInit {
             res.model_number = `${res.model_number} - copy`;
           }
           this.productForm.patchValue(res);
-          this.transferListSource = this.transferListSource.map(obj => {
-            return {
-              id: obj.id,
-              title: obj.title,
-              direction: this.approvalList.includes(obj.id) ? 'right' : 'left',
-            }
-          })
+          console.info(this.transferListSource);
+          // this.transferListSource = this.transferListSource.map(obj => {
+          //   console.info(obj);
+          //   const prodType = this.productForm.get('type').value;
+          //   const productTypesArray = obj.product_types || [];
+          //   console.info(prodType);
+          //   console.info(productTypesArray);
+          //   //console.info(obj.product_types);
+          //   //console.info((obj.product_types).includes(prodType))
+          //   let hide;
+
+          //   // if (productTypesArray.includes(prodType)) {
+          //   //   hide = false;
+          //   // } else {
+          //   //   hide = true;
+          //   // }
+
+          //   console.info(hide);
+          //   return {
+          //     id: obj.id,
+          //     title: obj.title,
+          //     // type: obj.type,
+          //     product_types: obj.product_types,
+          //     direction: this.approvalList.includes(obj.id) ? 'right' : 'left',
+          //     _hiden: productTypesArray.includes(prodType) ? false : true,
+          //   }
+          // })
           this.fileList = res.attachment;
           //this.productForm.setValue(res);
           // this.nestedForm.patchValue(res.data);
@@ -213,6 +235,25 @@ export class ProductsProductsEditComponent implements OnInit {
         }
       }
     );
+
+
+    // change approvals
+
+    this.transferListSource = this.transferListSource.map(obj => {
+      console.info(obj);
+      const prodType = evt;
+      const productTypesArray = obj.product_types || [];
+      console.info(prodType);
+      console.info(productTypesArray);
+      return {
+        id: obj.id,
+        title: obj.title,
+        product_types: obj.product_types,
+        direction: this.approvalList.includes(obj.id) ? 'right' : 'left',
+        _hiden: productTypesArray.includes(prodType) ? false : true,
+      }
+    })
+
   }
 
   submitForm() {

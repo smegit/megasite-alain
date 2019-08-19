@@ -21,9 +21,18 @@
         <nz-form-label [nzMd]="8" [nzSm]="24" nzRequired nzFor="approval_no">Approval No.
         </nz-form-label>
         <nz-form-control [nzMd]="16" [nzSm]="24">
-          <input nz-input formControlName="approval_no" id="approval_no" />
-          <nz-form-explain *ngIf="approvalForm.get('approval_no')?.dirty && approvalForm.get('approval_no')?.errors">
-            The input is invalid.
+          <input nz-input formControlName="approval_no" id="approval_no" style="color: currentColor" />
+          <nz-form-explain
+            *ngIf="approvalForm.get('approval_no')?.dirty && approvalForm.get('approval_no')?.errors || approvalForm.get('approval_no')?.pending">
+            <ng-container *ngIf="approvalForm.get('approval_no')?.hasError('required')">
+              Please input approval number!
+            </ng-container>
+            <ng-container *ngIf="approvalForm.get('approval_no')?.hasError('duplicated')">
+              {{approvalForm.get('approval_no').value}} already exist!
+            </ng-container>
+            <ng-container *ngIf="approvalForm.get('approval_no')?.pending">
+              Validating...
+            </ng-container>
           </nz-form-explain>
         </nz-form-control>
       </nz-form-item>
@@ -35,10 +44,6 @@
         </nz-form-label>
         <nz-form-control [nzMd]="16" [nzSm]="24">
           <input nz-input formControlName="approval_type" id="approval_type" />
-          <nz-form-explain
-            *ngIf="approvalForm.get('approval_type')?.dirty && approvalForm.get('approval_type')?.errors">
-            The input is invalid.
-          </nz-form-explain>
         </nz-form-control>
       </nz-form-item>
     </nz-col>
@@ -153,11 +158,23 @@
 
     <nz-col [nzMd]="24" [nzSm]="24">
       <nz-form-item>
+        <nz-form-label [nzMd]="4" [nzSm]="24" nzFor="Product Type">Product Type
+        </nz-form-label>
+        <nz-form-control [nzMd]="20" [nzSm]="24">
+          <nz-select formControlName="product_types" [nzMode]="'tags'" (ngModelChange)="onTypeChange(evt)">
+            <nz-option *ngFor="let option of allTypeOpts" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-col>
+
+    <nz-col [nzMd]="24" [nzSm]="24">
+      <nz-form-item>
         <nz-form-label [nzMd]="4" [nzSm]="24" nzFor="doc">Products
         </nz-form-label>
         <nz-form-control [nzMd]="20" [nzSm]="24">
           <nz-transfer [nzDataSource]="transferListSource" [nzTitles]="['Source', 'Target']" nzShowSearch
-            (nzChange)="change($event)">
+            (nzChange)="change($event)" [nzFilterOption]="filterOpts">
           </nz-transfer>
         </nz-form-control>
       </nz-form-item>
