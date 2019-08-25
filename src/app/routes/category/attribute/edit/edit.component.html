@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Attribute {{ record.id }} </div>
+  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Attribute - {{ record.name }} </div>
   <ng-template #addNew>
     <div class="modal-title">Add Attribute</div>
   </ng-template>
@@ -107,18 +107,26 @@
   <nz-form-item>
     <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">
       <span>Group
-        <i nz-icon nz-tooltip nzTitle="This is used to group attributes" type="question-circle" theme="outline"></i>
+        <i nz-icon nz-tooltip [nzTitle]="groupTip" type="question-circle" theme="outline"></i>
       </span>
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <nz-select formControlName="seq_group" [nzMode]="'tags'" [nzMaxMultipleCount]="1" nzPlaceHolder="optional">
-        <nz-option *ngFor="let option of listOfGroup" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+        <nz-option *ngFor="let option of listOfGroup" [nzLabel]="option" [nzValue]="option"></nz-option>
       </nz-select>
+      <nz-form-explain *ngIf="attributeForm.get('seq_group')?.hasError('wrongFormat')">
+        <ng-container>
+          Only allow lowercase and underscore, eg. function_list.
+        </ng-container>
+      </nz-form-explain>
     </nz-form-control>
   </nz-form-item>
 
   <nz-form-item>
-    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">Sequence
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="description">
+      <span>Sequence
+        <i nz-icon nz-tooltip [nzTitle]="sequenceTip" type="question-circle" theme="outline"></i>
+      </span>
     </nz-form-label>
     <nz-form-control [nzMd]="16" [nzSm]="24">
       <nz-input-number formControlName="sequence" id="sequence" [nzMin]="1" [nzMax]="20" [nzStep]="1"

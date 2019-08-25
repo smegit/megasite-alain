@@ -35,6 +35,7 @@ export class ProductsProductsEditComponent implements OnInit {
   funOptions: any[] = [];
   fileList: UploadFile[] = [];
   approvalList: any[] = [];
+  coverImageUrls = [];
   fileTypeOptions: Array<{ label: string; value: string }> = [
     { label: 'CoverImage', value: 'CoverImage' },
     { label: 'Image', value: 'Image' },
@@ -122,6 +123,15 @@ export class ProductsProductsEditComponent implements OnInit {
           }
           this.productForm.patchValue(res);
           console.info(this.transferListSource);
+
+          // init coverImageUrls[]
+          if (Array.isArray(res['attachment'])) {
+            res['attachment'].forEach(e => {
+              if (e.type == 'CoverImage') {
+                this.coverImageUrls.push(e.url);
+              }
+            });
+          }
           // this.transferListSource = this.transferListSource.map(obj => {
           //   console.info(obj);
           //   const prodType = this.productForm.get('type').value;
@@ -364,4 +374,10 @@ export class ProductsProductsEditComponent implements OnInit {
         observer.complete();
       });
     })
+
+  onClickImg(evt) {
+    console.info('onClickImg called');
+    console.info(evt);
+    window.open(evt);
+  }
 }

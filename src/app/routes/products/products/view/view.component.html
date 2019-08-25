@@ -1,12 +1,12 @@
 <div class="modal-header">
-  <div class="modal-title">View {{ record.model_number }} </div>
+  <div class="modal-title">View Product - {{ record.model_number }} </div>
 </div>
 <nz-spin *ngIf="!data" class="modal-spin"></nz-spin>
 <div sv-container *ngIf="data" col=1 labelWidth="150" style="min-height: 550px">
 
   <nz-tabset [nzSize]="'small'">
-    <nz-tab nzTitle="Base">
-      <sv label="Cover Image">
+    <nz-tab nzTitle="Attributes">
+      <sv label="Cover Image" *ngIf="coverImageUrls.length > 0">
         <img [src]="coverImageUrls[0]" onerror="this.src='/assets/tmp/images/image-placeholder.jpg'"
           (click)="onClickImg(coverImageUrls[0])" style="max-width: 100px;margin-right: 10px;">
       </sv>
@@ -30,17 +30,9 @@
           </div>
         </nz-carousel>
       </sv> -->
-    </nz-tab>
-    <nz-tab nzTitle="Approval">
-      <sv label="Approval">
-        <nz-list [nzDataSource]="data.approval" nzBordered nzSize="small" [nzRenderItem]="item">
-          <ng-template #item let-item>
-            <nz-list-item [nzContent]="item.approval_no"></nz-list-item>
-          </ng-template>
-        </nz-list>
-      </sv>
-    </nz-tab>
-    <nz-tab nzTitle="Custom Attributes">
+
+
+      <nz-divider nzText="Custom Attributes"></nz-divider>
       <nz-empty *ngIf="!customAttributes.length > 0" [nzNotFoundContent]="customEmptyTpl"></nz-empty>
       <sv *ngFor="let item of customAttributes; let i = index" [label]="item.label">
 
@@ -53,11 +45,11 @@
         </ul>
 
         <!-- <nz-list *ngIf="item.ui_type == 'Multi Selection' && item.name =='function_list'"
-          [nzDataSource]="data.data[item.name]" nzBordered nzSize="small" [nzRenderItem]="featureItem">
-          <ng-template #featureItem let-item>
-            <nz-list-item [nzContent]="item"></nz-list-item>
-          </ng-template>
-        </nz-list> -->
+                [nzDataSource]="data.data[item.name]" nzBordered nzSize="small" [nzRenderItem]="featureItem">
+                <ng-template #featureItem let-item>
+                  <nz-list-item [nzContent]="item"></nz-list-item>
+                </ng-template>
+              </nz-list> -->
         <ul *ngIf="item.ui_type == 'Multi Selection' && item.name =='function_list'" style="column-count: 2">
           <li *ngFor="let item of data.data[item.name]">
             <!-- <img [src]="'/assets/tmp/images/products/function_icons/' + item  + '.jpg'" style="height: 40px;"> -->
@@ -75,8 +67,46 @@
           <p>The category has not been given any custom attributes.</p>
         </div>
       </ng-template>
-
     </nz-tab>
+    <nz-tab nzTitle="Approval">
+      <sv label="Approval">
+        <nz-list [nzDataSource]="data.approval" nzBordered nzSize="small" [nzRenderItem]="item">
+          <ng-template #item let-item>
+            <nz-list-item [nzContent]="item.approval_no"></nz-list-item>
+          </ng-template>
+        </nz-list>
+      </sv>
+    </nz-tab>
+    <!-- <nz-tab nzTitle="Custom Attributes">
+      <nz-empty *ngIf="!customAttributes.length > 0" [nzNotFoundContent]="customEmptyTpl"></nz-empty>
+      <sv *ngFor="let item of customAttributes; let i = index" [label]="item.label">
+
+       
+        <ul *ngIf="item.ui_type == 'Multi Selection' && item.name !='function_list'">
+          <li *ngFor="let item of data.data[item.name]">
+            {{item}}
+          </li>
+        </ul>
+
+        
+        <ul *ngIf="item.ui_type == 'Multi Selection' && item.name =='function_list'" style="column-count: 2">
+          <li *ngFor="let item of data.data[item.name]">
+            <img [src]="getFunUrl(item)" style="height: 40px;">
+            {{getDescription(item)}}
+          </li>
+        </ul>
+
+        <span *ngIf="item.ui_type == 'Input' || item.ui_type == 'Single Selection'">
+          {{data.data[item.name]}}
+        </span>
+      </sv>
+      <ng-template #customEmptyTpl>
+        <div style="text-align: center;">
+          <p>The category has not been given any custom attributes.</p>
+        </div>
+      </ng-template>
+
+    </nz-tab> -->
     <nz-tab nzTitle="Attachment">
       <!-- <sv label="Attachment">
         <nz-carousel [nzEffect]="'scrollx'" [nzAutoPlay]="true" style="max-width: 400px">

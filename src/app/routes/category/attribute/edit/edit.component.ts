@@ -19,11 +19,15 @@ export class CategoryAttributeEditComponent implements OnInit {
     { label: 'Single Selection', value: 'Single Selection' },
     { label: 'Multi Selection', value: 'Multi Selection' }
   ];
-  listOfGroup: Array<{ label: string; value: string }> = [
-    { label: 'Most Important', value: 'most_important' },
-    { label: 'Important', value: 'important' },
-    { label: 'Not Important', value: 'not_important' }
-  ];
+  listOfGroup: any[] = [];
+
+  //   [
+  //   { label: 'Most Important', value: 'most_important' },
+  //   { label: 'Important', value: 'important' },
+  //   { label: 'Not Important', value: 'not_important' }
+  // ];
+  groupTip = 'This is used to group attributes';
+  sequenceTip = 'This sequence defines the order of attributes within the group';
 
   constructor(
     private modal: NzModalRef,
@@ -41,7 +45,7 @@ export class CategoryAttributeEditComponent implements OnInit {
       ui_type: [null, [Validators.required]],
       input_type: [null],
       options: [null],
-      seq_group: [null],
+      seq_group: [null, [this.seqGroupValidator]],
       sequence: [null]
     });
 
@@ -56,6 +60,21 @@ export class CategoryAttributeEditComponent implements OnInit {
         // this.attributeForm.get('options').updateValueAndValidity();
       }
     );
+
+    // get distinct list seq group options
+
+    this.attributeSrv.getAllAttributes().subscribe(res => {
+      console.info(res);
+      // this.listOfGroup = res.map();
+      for (let i = 0; i < res.length; i++) {
+        if (Array.isArray(res[i]['seq_group'])) {
+          if (!this.listOfGroup.includes(res[i]['seq_group'][0])) {
+            this.listOfGroup.push(res[i]['seq_group'][0]);
+          }
+        }
+
+      }
+    });
 
 
     // // get all attributes
@@ -149,10 +168,17 @@ export class CategoryAttributeEditComponent implements OnInit {
 
   // Validators
   nameValidator = (control: FormControl): { [s: string]: boolean } => {
-
     if (!control.value) {
       return { required: true };
     } else if (!/^[a-z]+(?:_+[a-z]+)*$/.test(control.value)) {
+      return { name: true, error: true, wrongFormat: true };
+    }
+    return {};
+  }
+
+  seqGroupValidator = (control: FormControl): { [s: string]: boolean } => {
+    if (!/^[a-z]+(?:_+[a-z]+)*$/.test(control.value) && control.value.length > 0) {
+      console.info('true');
       return { name: true, error: true, wrongFormat: true };
     }
     return {};

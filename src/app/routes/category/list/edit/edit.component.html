@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Category {{ record.id }} </div>
+  <div class="modal-title" *ngIf="record.id > 0; else addNew">Edit Category - {{ record.name }} </div>
   <ng-template #addNew>
     <div class="modal-title">Add Category</div>
   </ng-template>
@@ -60,13 +60,16 @@
     </nz-form-label>
     <nz-form-control [nzMd]="18" [nzSm]="24">
       <nz-transfer [nzDataSource]="transferListSource" [nzTitles]="['Source', 'Target']" nzShowSearch
-        (nzChange)="change($event)">
+        [nzListStyle]="{ 'width.px': 250, 'height.px': 300 }" (nzChange)="change($event)">
       </nz-transfer>
     </nz-form-control>
   </nz-form-item>
 
   <nz-form-item>
-    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">Sorter
+    <nz-form-label [nzMd]="6" [nzSm]="24" nzFor="doc">
+      <span>Sorter
+        <i nz-icon nz-tooltip [nzTitle]="sorterTip" type="question-circle" theme="outline"></i>
+      </span>
     </nz-form-label>
     <nz-form-control [nzMd]="18" [nzSm]="24">
       <nz-select formControlName="sorter" [nzMode]="'tags'" nzPlaceHolder="optional">
@@ -96,7 +99,7 @@
     <thead>
       <tr>
         <th>File</th>
-        <th>Type</th>
+        <!-- <th>Type</th> -->
         <th>Description</th>
         <th>Action</th>
       </tr>
@@ -104,12 +107,12 @@
     <tbody cdkDropList (cdkDropListDropped)="drop($event)">
       <tr *ngFor="let data of editRowTable.data" class="editable-row" cdkDrag>
         <td>{{ data.name }}</td>
-        <td>
+        <!-- <td>
           {{ data.uid }}
-        </td>
+        </td> -->
         <td>
           <div class="editable-cell" *ngIf="data.id > 0; else editTpl">
-            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, $event)">
+            <div class="editable-cell-value-wrap">
               {{ data.description }}
             </div>
           </div>

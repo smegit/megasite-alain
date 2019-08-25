@@ -94,7 +94,7 @@ export class CategoryListComponent implements OnInit {
   add() {
     console.info('add called');
     this.modal
-      .createStatic(CategoryListEditComponent, { i: { id: 0 } }, { size: 'md' })
+      .createStatic(CategoryListEditComponent, { i: { id: 0 } }, { size: 'lg' })
       .subscribe((res) => {
         console.info(res);
         this.st.reload();
@@ -106,7 +106,7 @@ export class CategoryListComponent implements OnInit {
   openEdit(record) {
     console.info('openEdit called');
     console.info(record);
-    this.modal.createStatic(CategoryListEditComponent, { record }, { size: 'md' })
+    this.modal.createStatic(CategoryListEditComponent, { record }, { size: 'lg' })
       .subscribe((res) => {
         console.info(res);
         this.st.reload();

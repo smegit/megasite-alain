@@ -32,6 +32,7 @@ export class CategoryListEditComponent implements OnInit {
   attributesList: any[] = [];
   uploading = false;
   categoryForm: FormGroup;
+  sorterTip = 'Sorter defines how attributes group being sorted in the product edit/view page.';
   // listOfSorter: Array<{ label: string; value: string }> = [
   //   { label: 'Most Important', value: 'most_important' },
   //   { label: 'Important', value: 'important' },
@@ -241,10 +242,20 @@ export class CategoryListEditComponent implements OnInit {
 
     }
 
-
-
-
-
+    this.listOfSorter = [];
+    this.transferListSource.forEach((e) => {
+      if (this.attributesList.includes(e.key)) {
+        if (!this.listOfSorter.includes(e.seq_group)) {
+          this.listOfSorter.push(e.seq_group);
+        }
+      }
+    })
   }
+
+  // onSorterOpen(evt) {
+  //   console.info(evt);
+  //   console.info(this.transferListSource);
+  // }
+
 
 }
